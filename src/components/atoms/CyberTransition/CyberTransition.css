@@ -52,6 +52,30 @@
   100% { opacity: 0;    transform: translateX(0);        clip-path: inset(0 0 100% 0); filter: none; }
 }
 
+/* Versión liviana del glitch de salida para mobile: el `.cyber-transition`
+   envuelve todo el formulario (paneles con backdrop-filter, sombras, etc),
+   así que animar `filter: drop-shadow(...)` + `hue-rotate/saturate` encima
+   de eso obliga a repintar ese árbol completo en cada step, y en celulares
+   de gama media/baja se traba en vez de verse como un glitch intencional.
+   Se saca el filter (lo más caro) y se baja de 10 a 6 steps; queda el
+   corte por clip-path + el temblor de transform, que sigue leyéndose como
+   glitch pero es mucho más barato de pintar. En desktop se mantiene la
+   versión completa de arriba. */
+@media (max-width: 37.4375rem) {
+  .cyber-transition.cyber-transition--exiting {
+    animation: ctGlitchOutLight 280ms steps(6) both;
+  }
+
+  @keyframes ctGlitchOutLight {
+    0%   { opacity: 1;    transform: translateX(0);        clip-path: inset(0 0 0% 0); }
+    16%  { opacity: 0.9;  transform: translateX(-0.2rem);  clip-path: inset(15% 0 55% 0); }
+    32%  { opacity: 0.7;  transform: translateX(0.2rem);   clip-path: inset(0 0 0% 0); }
+    50%  { opacity: 0.5;  transform: translateX(-0.15rem); clip-path: inset(30% 0 15% 0); }
+    75%  { opacity: 0.25; transform: translateX(0.1rem); }
+    100% { opacity: 0;    transform: translateX(0);        clip-path: inset(0 0 100% 0); }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .cyber-transition[data-effect] {
     animation: none;
