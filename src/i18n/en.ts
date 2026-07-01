@@ -94,6 +94,7 @@ export const en: Translations = {
     comingSoon: 'COMING SOON',
     createdBy: 'Created by AzanoRivers',
     logoAlt: 'AzanoLabs neon logo',
+    githubLabel: 'View source on GitHub',
     projects: {
       cartum: { title: 'Cartum', description: 'Headless CMS' },
       suportum: { title: 'Suportum', description: 'Chat & Order Management' },

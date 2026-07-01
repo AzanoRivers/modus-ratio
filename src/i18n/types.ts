@@ -109,6 +109,7 @@ export interface Translations {
     comingSoon: string
     createdBy: string
     logoAlt: string
+    githubLabel: string
     projects: {
       cartum: { title: string; description: string }
       suportum: { title: string; description: string }

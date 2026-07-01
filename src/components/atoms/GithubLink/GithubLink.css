@@ -1,0 +1,37 @@
+.github-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(var(--ch-fg), 0.6);
+  transition: color var(--transition-base), transform var(--transition-base);
+}
+
+.github-link:hover {
+  color: rgba(var(--ch-white), 1);
+  transform: scale(1.08);
+}
+
+.github-link__icon {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+@media (min-width: 440px) {
+  .github-link__icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+}
+
+@media (min-width: 600px) {
+  .github-link__icon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .github-link {
+    transition: none;
+  }
+}
