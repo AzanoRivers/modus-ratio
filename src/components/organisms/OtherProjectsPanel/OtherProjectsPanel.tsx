@@ -10,7 +10,7 @@ import {
   MapPin,
   Sprout,
   MessageSquare,
-  Shirt,
+  Scissors,
   type LucideIcon,
 } from 'lucide-react'
 import { ProjectCard } from '@/components/atoms'
@@ -25,7 +25,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   MapPin,
   Sprout,
   MessageSquare,
-  Shirt,
+  Scissors,
 }
 
 export interface OtherProjectItem {

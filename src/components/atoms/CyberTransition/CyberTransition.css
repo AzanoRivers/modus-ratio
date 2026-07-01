@@ -62,6 +62,10 @@
    glitch pero es mucho más barato de pintar. En desktop se mantiene la
    versión completa de arriba. */
 @media (max-width: 37.4375rem) {
+  .cyber-transition {
+    position: relative;
+  }
+
   .cyber-transition.cyber-transition--exiting {
     animation: ctGlitchOutLight 280ms steps(6) both;
   }
@@ -74,6 +78,51 @@
     75%  { opacity: 0.25; transform: translateX(0.1rem); }
     100% { opacity: 0;    transform: translateX(0);        clip-path: inset(0 0 100% 0); }
   }
+
+  /* Un par de líneas de aberración cromática, más baratas que el filter:
+     drop-shadow de desktop. Son dos barras planas de 2px con opacity +
+     transform nada más (compositor puro, sin filter ni blur), así que le
+     devuelven el toque de color del glitch sin el costo de repintar. */
+  .cyber-transition.cyber-transition--exiting::before,
+  .cyber-transition.cyber-transition--exiting::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    height: 2px;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .cyber-transition.cyber-transition--exiting::before {
+    top: 24%;
+    background: rgba(45, 220, 255, 0.85);
+    animation: ctChromaLineCyan 280ms steps(6) both;
+  }
+
+  .cyber-transition.cyber-transition--exiting::after {
+    top: 58%;
+    background: rgba(255, 45, 120, 0.85);
+    animation: ctChromaLineMagenta 280ms steps(6) both;
+  }
+
+  @keyframes ctChromaLineCyan {
+    0%   { opacity: 0; }
+    16%  { opacity: 0.9; transform: translateX(-0.35rem); }
+    32%  { opacity: 0;   transform: translateX(0.2rem); }
+    50%  { opacity: 0.7; transform: translateX(-0.25rem); }
+    66%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes ctChromaLineMagenta {
+    0%   { opacity: 0; }
+    16%  { opacity: 0.9; transform: translateX(0.35rem); }
+    32%  { opacity: 0;   transform: translateX(-0.2rem); }
+    50%  { opacity: 0.7; transform: translateX(0.25rem); }
+    66%  { opacity: 0; }
+    100% { opacity: 0; }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -83,5 +132,11 @@
 
   .cyber-transition.cyber-transition--exiting {
     animation: none;
+  }
+
+  .cyber-transition.cyber-transition--exiting::before,
+  .cyber-transition.cyber-transition--exiting::after {
+    animation: none;
+    opacity: 0;
   }
 }
