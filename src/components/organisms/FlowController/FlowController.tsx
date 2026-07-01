@@ -26,8 +26,41 @@ const GLITCH_OUT_MS = 320
 // de abajo cambia de tamaño (form <-> loader <-> resultados) y el scroll
 // quedaba donde estuviera el mouse, a veces lejos de todo. Se lo ancla ahí
 // en vez de a document.body/0,0 porque sigue siendo visible en las 3 fases.
-function scrollToPrivacyNotice() {
-  document.getElementById('privacy-warning')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+//
+// El callback (lo que efectivamente cambia de fase y dispara el glitch) se
+// ejecuta DESPUÉS de que termina el scroll, no al mismo tiempo: si ambas
+// animaciones corren juntas (scroll largo, ej. desde el botón al fondo del
+// formulario, + el contenido glitcheando y encogiéndose a la vez) se ven
+// descoordinadas, como si nada controlara la transición. Primero se asienta
+// la vista arriba, recién ahí arranca el glitch.
+function scrollToPrivacyNoticeThen(callback: () => void) {
+  const el = document.getElementById('privacy-warning')
+  if (!el) {
+    callback()
+    return
+  }
+
+  // Ya está arriba (ej. formulario corto en desktop, no hizo falta scrollear):
+  // no tiene sentido esperar, se dispara la transición de inmediato.
+  const { top } = el.getBoundingClientRect()
+  if (top >= 0 && top < 24) {
+    callback()
+    return
+  }
+
+  let done = false
+  const finish = () => {
+    if (done) return
+    done = true
+    window.removeEventListener('scrollend', finish)
+    window.clearTimeout(fallback)
+    callback()
+  }
+
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  window.addEventListener('scrollend', finish, { once: true })
+  // Red de seguridad para navegadores sin soporte de 'scrollend'.
+  const fallback = window.setTimeout(finish, 900)
 }
 
 export function FlowController({ t }: FlowControllerProps) {
@@ -66,13 +99,11 @@ export function FlowController({ t }: FlowControllerProps) {
   const handleSubmit = () => {
     const file = useAppStore.getState().currentFile
     if (!file || !canAnalyze()) return
-    scrollToPrivacyNotice()
-    startFlow(file)
+    scrollToPrivacyNoticeThen(() => startFlow(file))
   }
 
   const handleReanalyze = () => {
-    scrollToPrivacyNotice()
-    useAppStore.getState().resetForReanalysis()
+    scrollToPrivacyNoticeThen(() => useAppStore.getState().resetForReanalysis())
   }
 
   const handleRetry = () => {

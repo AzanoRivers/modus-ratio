@@ -45,23 +45,6 @@
   }
 }
 
-/* Por debajo de xl (600px = 37.5rem): mismo umbral que isXl en OtherProjectsPanel.tsx */
-@media (max-width: 37.4375rem) {
-  .opp__btn--blue {
-    border-color: rgba(var(--ch-blue), 0.15);
-    color: rgba(var(--ch-blue), 0.3);
-    box-shadow: none;
-    background: transparent;
-  }
-
-  .opp__btn--pink {
-    border-color: rgba(var(--ch-pink), 0.15);
-    color: rgba(var(--ch-pink), 0.3);
-    box-shadow: none;
-    background: transparent;
-  }
-}
-
 .opp__btn--blue {
   top: 3rem;
   border-color: rgba(var(--ch-blue), 0.4);
