@@ -10,6 +10,7 @@ import {
   MapPin,
   Sprout,
   MessageSquare,
+  Shirt,
   type LucideIcon,
 } from 'lucide-react'
 import { ProjectCard } from '@/components/atoms'
@@ -24,6 +25,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   MapPin,
   Sprout,
   MessageSquare,
+  Shirt,
 }
 
 export interface OtherProjectItem {
@@ -31,7 +33,7 @@ export interface OtherProjectItem {
   title: string
   description: string
   iconKey: string
-  accent: 'blue' | 'green' | 'pink'
+  accent: 'blue' | 'green' | 'pink' | 'purple'
   tag: string
   ctaLabel: string
   build?: boolean

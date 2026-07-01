@@ -23,10 +23,12 @@
   --neon-pink:       rgba(var(--ch-pink),      0.7);
   --neon-blue:       rgba(var(--ch-blue),      0.8);
   --neon-green:      rgba(var(--ch-green),     0.8);
+  --neon-purple:     rgba(var(--ch-purple),    0.8);
   --neon-white-glow: rgba(var(--ch-white),     0.5);
   --neon-pink-glow:  rgba(var(--ch-pink),      0.7);
   --neon-blue-glow:  rgba(var(--ch-blue-glow), 0.9);
   --neon-green-glow: rgba(var(--ch-green),     0.8);
+  --neon-purple-glow: rgba(var(--ch-purple),   0.9);
 
   /* Logo glow */
   --logo-glow-white-inner: rgba(var(--ch-white),     0.8);

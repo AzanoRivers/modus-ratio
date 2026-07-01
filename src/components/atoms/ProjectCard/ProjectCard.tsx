@@ -7,7 +7,7 @@ export interface ProjectCardProps {
   title: string
   description?: string
   icon: LucideIcon
-  accent?: 'blue' | 'green' | 'pink'
+  accent?: 'blue' | 'green' | 'pink' | 'purple'
   tag?: string
   ctaLabel: string
   comingSoonLabel?: string
@@ -34,7 +34,9 @@ export function ProjectCard({
       ? 'project-card--green'
       : accent === 'pink'
         ? 'project-card--pink'
-        : ''
+        : accent === 'purple'
+          ? 'project-card--purple'
+          : ''
 
   return (
     <CyberCardLink

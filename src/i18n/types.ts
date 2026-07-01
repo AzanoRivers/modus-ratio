@@ -116,6 +116,7 @@ export interface Translations {
       pixelatam: { title: string; description: string }
       plantum: { title: string; description: string }
       codepass: { title: string; description: string }
+      modusRatio: { title: string; description: string }
       quantum: { title: string; description: string }
     }
   }

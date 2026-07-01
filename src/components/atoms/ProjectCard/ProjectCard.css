@@ -57,6 +57,16 @@
   animation-delay: -2.33s;
 }
 
+.project-card--purple {
+  --card-border:       rgba(var(--ch-purple), 0.2);
+  --card-border-hover: rgba(var(--ch-purple), 0.65);
+  --card-bg:           rgba(var(--ch-purple), 0.04);
+  --card-shadow:       rgba(var(--ch-purple), 0.12);
+  --card-shadow-hover: rgba(var(--ch-purple), 0.32);
+  --card-icon: var(--neon-purple);
+  animation-delay: -0.875s;
+}
+
 /* !important necesario: este elemento también recibe las utilidades
    Tailwind `transition-colors duration-300` desde ProjectCard.tsx, cuya
    posición en el CSS final generado por Vite no está garantizada respecto
@@ -383,7 +393,8 @@
 @media (prefers-reduced-motion: reduce) {
   .project-card,
   .project-card--green,
-  .project-card--pink {
+  .project-card--pink,
+  .project-card--purple {
     animation: none;
   }
   .project-card--flash,

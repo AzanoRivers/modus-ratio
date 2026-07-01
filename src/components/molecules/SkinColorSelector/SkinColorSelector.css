@@ -25,17 +25,84 @@
   opacity: 0.45;
 }
 
+/* En mobile el contenedor de swatches puede no alcanzar a mostrar los 6
+   tonos completos: se hace scrollable en horizontal, con marcas a los
+   costados que indican que hay más contenido para ese lado. */
+.skin-color-selector__scroll-wrap {
+  position: relative;
+  width: 100%;
+}
+
 .skin-color-selector__swatches {
   display: flex;
   gap: 0.375rem;
   flex-wrap: nowrap;
   align-items: center;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  padding: 0 0.125rem;
+}
+
+.skin-color-selector__swatches::-webkit-scrollbar {
+  display: none;
+}
+
+.skin-color-selector__swatches .skin-swatch {
+  scroll-snap-align: start;
+}
+
+.skin-color-selector__scroll-hint {
+  position: absolute;
+  top: 50%;
+  width: 1rem;
+  height: 1rem;
+  transform: translateY(-50%);
+  color: var(--neon-blue);
+  filter: drop-shadow(0 0 4px rgba(var(--ch-blue), 0.6));
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-base);
+}
+
+.skin-color-selector__scroll-hint--left  { left: -0.25rem; }
+.skin-color-selector__scroll-hint--right { right: -0.25rem; }
+
+.skin-color-selector__scroll-hint--visible {
+  animation: skinScrollHintPulse 1.4s ease-in-out infinite;
+}
+
+.skin-color-selector__scroll-hint--left.skin-color-selector__scroll-hint--visible {
+  animation-name: skinScrollHintPulseLeft;
+}
+
+@keyframes skinScrollHintPulse {
+  0%, 100% { opacity: 0.4; transform: translateY(-50%) translateX(0); }
+  50%      { opacity: 0.9; transform: translateY(-50%) translateX(2px); }
+}
+
+@keyframes skinScrollHintPulseLeft {
+  0%, 100% { opacity: 0.4; transform: translateY(-50%) translateX(0); }
+  50%      { opacity: 0.9; transform: translateY(-50%) translateX(-2px); }
 }
 
 @media (min-width: 600px) {
   .skin-color-selector {
     align-items: center;
     text-align: center;
+  }
+
+  /* A partir de acá entran todos los swatches sin recortarse: se desactiva
+     el scroll y las marcas, quedan como una fila fija centrada. */
+  .skin-color-selector__swatches {
+    overflow-x: visible;
+    scroll-snap-type: none;
+    padding: 0;
+  }
+
+  .skin-color-selector__scroll-hint {
+    display: none;
   }
 }
 
@@ -93,4 +160,5 @@
 
 @media (prefers-reduced-motion: reduce) {
   .skin-swatch { transition: none; }
+  .skin-color-selector__scroll-hint--visible { animation: none; opacity: 0.6; }
 }

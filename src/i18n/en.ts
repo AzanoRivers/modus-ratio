@@ -101,6 +101,7 @@ export const en: Translations = {
       pixelatam: { title: 'Pixelatam', description: 'Web 2.5 card game' },
       plantum: { title: 'Plantum', description: 'Green future' },
       codepass: { title: 'CodePass', description: 'Browser extension' },
+      modusRatio: { title: 'Modus Ratio', description: 'AI outfit advisor' },
       quantum: { title: 'Quantum Profit', description: 'Crypto calculator' },
     },
   },
