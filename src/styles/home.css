@@ -1,0 +1,140 @@
+.home {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0 1rem 2rem;
+  width: 100%;
+  max-width: min(640px, 100% - 2rem);
+  margin: 0 auto;
+  margin-top: 7rem;
+}
+
+@media (min-width: 360px) {
+  .home {
+    margin-top: 10rem;
+  }
+}
+
+@media (min-width: 440px) {
+  .home {
+    margin-top: 14rem;
+  }
+}
+
+@media (min-width: 600px) {
+  .home {
+    margin-top: 8rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .home {
+    max-width: min(980px, 100% - 4rem);
+    margin-top: 5rem;
+  }
+}
+
+.home__header {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+}
+
+.home__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+.home__title {
+  font-family: var(--font-orbitron);
+  font-weight: 700;
+  color: var(--foreground);
+  margin: 0;
+  letter-spacing: 0.04em;
+  user-select: none;
+}
+
+.home__subtitle {
+  font-family: var(--font-mono);
+  color: var(--foreground);
+  opacity: 0.8;
+  margin: 0;
+}
+
+@keyframes homeRainbow {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.home__subtitle-rainbow {
+  font-weight: 700;
+  background: linear-gradient(
+    90deg,
+    #6366f1,
+    #22d3ee,
+    #a855f7,
+    #22c55e,
+    #eab308,
+    #f97316,
+    #ec4899,
+    #6366f1
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: homeRainbow 8s linear infinite;
+  filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.4));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home__subtitle-rainbow {
+    animation: none;
+    background-position: 0% center;
+  }
+}
+
+.home__break {
+  display: flex;
+  justify-content: center;
+  width: 60%;
+  max-width: 220px;
+}
+
+.home__description {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--foreground);
+  opacity: 0.8;
+  line-height: 1.7;
+  text-align: center;
+  max-width: 38ch;
+}
+
+@media (min-width: 360px) {
+  .home__description {
+    font-size: 0.75rem;
+  }
+}
+
+@media (min-width: 600px) {
+  .home__description {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 1200px) {
+  .home__description {
+    font-size: 1rem;
+    max-width: 100%;
+  }
+}

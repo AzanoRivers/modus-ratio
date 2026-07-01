@@ -1,0 +1,19 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import ErrorDisplay from '@/components/templates/ErrorDisplay/ErrorDisplay.astro'
+import { getDictionary } from '@/i18n'
+
+const locale = Astro.locals.language
+const t = getDictionary(locale)
+const e = t.errors.notFound
+---
+
+<BaseLayout title={`${t.siteName} · ${e.code}`} locale={locale}>
+  <ErrorDisplay
+    code={e.code}
+    title={e.title}
+    message={e.message}
+    cta={e.cta}
+    colorClass="text-neon-glow-blue"
+  />
+</BaseLayout>

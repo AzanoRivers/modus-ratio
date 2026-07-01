@@ -1,0 +1,37 @@
+.usage-limit-message {
+  border:        1px solid rgba(var(--ch-yellow), 0.34); /* fallback iOS < 16 sin color-mix() */
+  border:        1px solid color-mix(in srgb, var(--color-warning) 40%, transparent);
+  border-radius: 0.5rem;
+  padding:       0.875rem 1rem;
+  background:    rgba(var(--ch-yellow), 0.07);
+  background:    color-mix(in srgb, var(--color-warning) 8%, transparent);
+  display:       flex;
+  flex-direction: column;
+  gap:            0.25rem;
+}
+
+.usage-limit-message__title {
+  font-family:    var(--font-mono);
+  font-size:      0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color:          var(--color-warning);
+}
+
+.usage-limit-message__body {
+  font-family: var(--font-mono);
+  font-size:   0.8125rem;
+  color:       rgba(var(--ch-fg), 0.6);
+}
+
+.usage-limit-message__countdown {
+  font-family: var(--font-mono);
+  font-size:   0.75rem;
+  color:       rgba(var(--ch-fg), 0.6);
+  margin-top:  0.25rem;
+}
+
+.usage-limit-message__minutes {
+  color:       var(--color-warning);
+  font-weight: 700;
+}

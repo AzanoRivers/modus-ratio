@@ -1,0 +1,44 @@
+.created-by-signature {
+  font-family: var(--font-signature);
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: rgba(var(--ch-fg), 0.8);
+  transition: color var(--transition-base);
+  padding: 0 0.5rem;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+
+@media (min-width: 360px) {
+  .created-by-signature {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 440px) {
+  .created-by-signature {
+    font-size: 1.125rem;
+  }
+}
+
+@media (min-width: 600px) {
+  .created-by-signature {
+    font-size: 1.5rem;
+  }
+}
+
+.created-by-signature:hover {
+  color: rgba(var(--ch-white), 1);
+}
+
+.created-by-signature__highlight {
+  margin-left: 0.5rem;
+  position: relative;
+  font-weight: 700;
+  color: rgba(var(--ch-white), 1);
+}

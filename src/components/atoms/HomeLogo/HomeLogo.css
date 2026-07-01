@@ -1,0 +1,25 @@
+.home-logo {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+@media (min-width: 360px) {
+  .home-logo {
+    width: 3rem;
+    height: 3rem;
+  }
+}
+
+@media (min-width: 440px) {
+  .home-logo {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+}
+
+@media (min-width: 600px) {
+  .home-logo {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+}

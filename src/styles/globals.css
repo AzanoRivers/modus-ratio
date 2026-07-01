@@ -1,0 +1,399 @@
+/* ── Fonts ──────────────────────────────────────────────────────── */
+@import '@fontsource/orbitron/400.css';
+@import '@fontsource/orbitron/700.css';
+@import '@fontsource/audiowide/400.css';
+@import '@fontsource/space-grotesk/400.css';
+@import '@fontsource/space-grotesk/500.css';
+@import '@fontsource-variable/geist-mono/index.css';
+
+/* ── Tailwind 4 ─────────────────────────────────────────────────── */
+@import 'tailwindcss';
+
+/* ── Constants ──────────────────────────────────────────────────── */
+@import './constants.css';
+
+/* ── Design tokens (:root) ──────────────────────────────────────── */
+:root {
+  --background: #041528;
+  --foreground: #ededed;
+
+  --az-grid-bg:   #041528;
+  --az-grid-line: rgba(255, 255, 255, 0.06);
+
+  --neon-pink:       rgba(var(--ch-pink),      0.7);
+  --neon-blue:       rgba(var(--ch-blue),      0.8);
+  --neon-green:      rgba(var(--ch-green),     0.8);
+  --neon-white-glow: rgba(var(--ch-white),     0.5);
+  --neon-pink-glow:  rgba(var(--ch-pink),      0.7);
+  --neon-blue-glow:  rgba(var(--ch-blue-glow), 0.9);
+  --neon-green-glow: rgba(var(--ch-green),     0.8);
+
+  /* Logo glow */
+  --logo-glow-white-inner: rgba(var(--ch-white),     0.8);
+  --logo-glow-white-outer: rgba(var(--ch-white),     0.4);
+  --logo-glow-pink-near:   rgba(var(--ch-pink),      0.5);
+  --logo-glow-pink-far:    rgba(var(--ch-pink),      0.3);
+  --logo-glow-blue-near:   rgba(var(--ch-blue-glow), 0.6);
+  --logo-glow-blue-far:    rgba(var(--ch-blue-glow), 0.4);
+
+  /* Semantic tokens (F6) */
+  --color-success:      rgba(var(--ch-green),  0.85);
+  --color-warning:      rgba(var(--ch-yellow), 0.85);
+  --color-error:        rgba(var(--ch-error),  0.85);
+  --color-info:         rgba(var(--ch-blue),   0.85);
+  --color-success-glow: rgba(var(--ch-green),  0.5);
+  --color-warning-glow: rgba(var(--ch-yellow), 0.5);
+  --color-error-glow:   rgba(var(--ch-error),  0.5);
+  --color-info-glow:    rgba(var(--ch-blue),   0.5);
+}
+
+/* ── Tailwind @theme tokens ─────────────────────────────────────── */
+@theme {
+  --color-background:   var(--background);
+  --color-foreground:   var(--foreground);
+  --color-az-grid-bg:   var(--az-grid-bg);
+  --color-az-grid-line: var(--az-grid-line);
+  --color-neon-pink:    var(--neon-pink);
+  --color-neon-blue:    var(--neon-blue);
+  --color-neon-green:   var(--neon-green);
+  --color-success:      var(--color-success);
+  --color-warning:      var(--color-warning);
+  --color-error:        var(--color-error);
+  --color-info:         var(--color-info);
+
+  --font-orbitron:  'Orbitron', sans-serif;
+  --font-audiowide: 'Audiowide', sans-serif;
+  --font-signature: 'Space Grotesk', sans-serif;
+  --font-mono:      'Geist Mono Variable', 'Geist Mono', monospace;
+
+  --breakpoint-sm: 16.875rem;  /* 270px */
+  --breakpoint-md: 22.5rem;    /* 360px */
+  --breakpoint-lg: 27.5rem;    /* 440px */
+  --breakpoint-xl: 37.5rem;    /* 600px */
+  --breakpoint-2xl: 75rem;     /* 1200px */
+}
+
+/* ── Base reset ─────────────────────────────────────────────────── */
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  min-height: 100vh;   /* fallback */
+  min-height: 100dvh;  /* iOS 15.4+: evita el layout shift al ocultarse la barra de Safari */
+}
+
+/* ── Scrollbar global (Firefox + WebKit) ────────────────────────── */
+* {
+  scrollbar-color: rgba(var(--ch-blue), 0.4) rgba(var(--ch-bg), 0.6);
+  scrollbar-width: thin;
+}
+
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: rgba(var(--ch-bg), 0.6); }
+::-webkit-scrollbar-thumb  { background: rgba(var(--ch-blue), 0.35); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(var(--ch-blue), 0.65);
+  box-shadow: 0 0 6px rgba(var(--ch-blue), 0.5);
+}
+::-webkit-scrollbar-corner { background: transparent; }
+
+/* ── Dark mode (app siempre dark, se respeta preferencia del sistema) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #041528;
+    --foreground: #ededed;
+  }
+}
+
+/* ── Custom utilities ───────────────────────────────────────────── */
+@layer utilities {
+
+  /* Grid blueprint */
+  .bg-az-grid {
+    background-color: var(--az-grid-bg);
+    background-image:
+      linear-gradient(var(--az-grid-line) 1px, transparent 1px),
+      linear-gradient(90deg, var(--az-grid-line) 1px, transparent 1px);
+    background-size: 25px 25px;
+  }
+
+  /* Neon glow text */
+  .text-neon-glow-blue {
+    color: var(--neon-blue);
+    user-select: none;
+    text-shadow:
+      0 0 var(--glow-spread-near)  var(--neon-blue),
+      0 0 var(--glow-spread-mid)   var(--neon-blue),
+      0 0 var(--glow-spread-far)   var(--neon-blue-glow),
+      0 0 var(--glow-spread-outer) var(--neon-blue-glow);
+  }
+
+  .text-neon-glow-pink {
+    color: var(--neon-pink);
+    user-select: none;
+    text-shadow:
+      0 0 var(--glow-spread-near)  var(--neon-pink),
+      0 0 var(--glow-spread-mid)   var(--neon-pink),
+      0 0 var(--glow-spread-far)   var(--neon-pink-glow),
+      0 0 var(--glow-spread-outer) var(--neon-pink-glow);
+  }
+
+  .text-neon-glow-green {
+    color: var(--neon-green);
+    user-select: none;
+    text-shadow:
+      0 0 var(--glow-spread-near)  var(--neon-green),
+      0 0 var(--glow-spread-mid)   var(--neon-green),
+      0 0 var(--glow-spread-far)   var(--neon-green-glow),
+      0 0 var(--glow-spread-outer) var(--neon-green-glow);
+  }
+
+  .text-neon-glow-white {
+    color: var(--foreground);
+    user-select: none;
+    text-shadow:
+      0 0 var(--glow-spread-near)  var(--neon-white-glow),
+      0 0 var(--glow-spread-mid)   var(--neon-white-glow),
+      0 0 var(--glow-spread-far)   var(--neon-white-glow),
+      0 0 var(--glow-spread-outer) var(--neon-white-glow);
+  }
+
+  /* Neon borders: bottom */
+  .border-b-neon-blue  { border-bottom: var(--neon-border-width) solid var(--neon-blue);  filter: drop-shadow(0 2px 4px var(--neon-blue)); }
+  .border-b-neon-pink  { border-bottom: var(--neon-border-width) solid var(--neon-pink);  filter: drop-shadow(0 2px 4px var(--neon-pink)); }
+  .border-b-neon-green { border-bottom: var(--neon-border-width) solid var(--neon-green); filter: drop-shadow(0 2px 4px var(--neon-green)); }
+
+  /* Neon borders: top */
+  .border-t-neon-blue  { border-top: var(--neon-border-width) solid var(--neon-blue);  filter: drop-shadow(0 -2px 4px var(--neon-blue)); }
+  .border-t-neon-pink  { border-top: var(--neon-border-width) solid var(--neon-pink);  filter: drop-shadow(0 -2px 4px var(--neon-pink)); }
+  .border-t-neon-green { border-top: var(--neon-border-width) solid var(--neon-green); filter: drop-shadow(0 -2px 4px var(--neon-green)); }
+
+  /* Neon borders: left */
+  .border-l-neon-blue  { border-left: var(--neon-border-width) solid var(--neon-blue);  filter: drop-shadow(-2px 0 4px var(--neon-blue)); }
+  .border-l-neon-pink  { border-left: var(--neon-border-width) solid var(--neon-pink);  filter: drop-shadow(-2px 0 4px var(--neon-pink)); }
+  .border-l-neon-green { border-left: var(--neon-border-width) solid var(--neon-green); filter: drop-shadow(-2px 0 4px var(--neon-green)); }
+
+  /* Neon borders: right */
+  .border-r-neon-blue  { border-right: var(--neon-border-width) solid var(--neon-blue);  filter: drop-shadow(2px 0 4px var(--neon-blue)); }
+  .border-r-neon-pink  { border-right: var(--neon-border-width) solid var(--neon-pink);  filter: drop-shadow(2px 0 4px var(--neon-pink)); }
+  .border-r-neon-green { border-right: var(--neon-border-width) solid var(--neon-green); filter: drop-shadow(2px 0 4px var(--neon-green)); }
+
+  /* Neon borders: full (con glow) */
+  .border-neon-blue  { border: var(--neon-border-width) solid var(--neon-blue);  filter: drop-shadow(0 0 4px var(--neon-blue)); }
+  .border-neon-pink  { border: var(--neon-border-width) solid var(--neon-pink);  filter: drop-shadow(0 0 4px var(--neon-pink)); }
+  .border-neon-green { border: var(--neon-border-width) solid var(--neon-green); filter: drop-shadow(0 0 4px var(--neon-green)); }
+
+  /* Scrollbar genérico */
+  .neon-scroll {
+    scrollbar-color: rgba(var(--ch-blue), 0.4) rgba(var(--ch-bg), 0.6);
+    scrollbar-width: thin;
+  }
+  .neon-scroll::-webkit-scrollbar        { width: 6px; height: 6px; }
+  .neon-scroll::-webkit-scrollbar-track  { background: rgba(var(--ch-bg), 0.6); }
+  .neon-scroll::-webkit-scrollbar-thumb  { background: rgba(var(--ch-blue), 0.35); border-radius: 3px; }
+  .neon-scroll::-webkit-scrollbar-thumb:hover { background: rgba(var(--ch-blue), 0.65); }
+
+  /* Scrollbar azul (más grueso, con glow) */
+  .neon-scroll-blue {
+    scrollbar-color: rgba(var(--ch-blue), 0.7) rgba(var(--ch-bg), 0.8);
+    scrollbar-width: thin;
+  }
+  .neon-scroll-blue::-webkit-scrollbar        { width: var(--scrollbar-width-component); height: var(--scrollbar-width-component); }
+  .neon-scroll-blue::-webkit-scrollbar-track  { background: rgba(var(--ch-bg), 0.8); }
+  .neon-scroll-blue::-webkit-scrollbar-thumb  {
+    background: rgba(var(--ch-blue), 0.5);
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(var(--ch-blue), 0.5);
+  }
+  .neon-scroll-blue::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--ch-blue), 0.8);
+    box-shadow: 0 0 10px rgba(var(--ch-blue), 0.7);
+  }
+
+  /* Scrollbar verde */
+  .neon-scroll-green {
+    scrollbar-color: rgba(var(--ch-green), 0.7) rgba(var(--ch-bg), 0.8);
+    scrollbar-width: thin;
+  }
+  .neon-scroll-green::-webkit-scrollbar        { width: var(--scrollbar-width-component); height: var(--scrollbar-width-component); }
+  .neon-scroll-green::-webkit-scrollbar-track  { background: rgba(var(--ch-bg), 0.8); }
+  .neon-scroll-green::-webkit-scrollbar-thumb  {
+    background: rgba(var(--ch-green), 0.5);
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(var(--ch-green), 0.5);
+  }
+  .neon-scroll-green::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--ch-green), 0.8);
+    box-shadow: 0 0 10px rgba(var(--ch-green), 0.7);
+  }
+
+  /* Scrollbar rosa */
+  .neon-scroll-pink {
+    scrollbar-color: rgba(var(--ch-pink), 0.7) rgba(var(--ch-bg), 0.8);
+    scrollbar-width: thin;
+  }
+  .neon-scroll-pink::-webkit-scrollbar        { width: var(--scrollbar-width-component); height: var(--scrollbar-width-component); }
+  .neon-scroll-pink::-webkit-scrollbar-track  { background: rgba(var(--ch-bg), 0.8); }
+  .neon-scroll-pink::-webkit-scrollbar-thumb  {
+    background: rgba(var(--ch-pink), 0.5);
+    border-radius: 4px;
+    box-shadow: 0 0 6px rgba(var(--ch-pink), 0.5);
+  }
+  .neon-scroll-pink::-webkit-scrollbar-thumb:hover {
+    background: rgba(var(--ch-pink), 0.8);
+    box-shadow: 0 0 10px rgba(var(--ch-pink), 0.7);
+  }
+}
+
+/* ── Responsive grid ────────────────────────────────────────────── */
+@media (min-width: 360px) { .bg-az-grid { background-size: 35px 35px; } }
+@media (min-width: 440px) { .bg-az-grid { background-size: 40px 40px; } }
+
+/* ── Botones: efecto de borde centellante (beam) ─────────────────
+   Utilidad compartida: cualquier botón que agregue la clase `btn-beam`
+   (junto a `button`/`button--primary`, etc.) recibe el haz de luz que
+   rota por el borde. Requiere `position: relative` (ya lo trae `.button`
+   de F6). */
+
+@property --btn-beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes btnBorderBeam {
+  to { --btn-beam-angle: 360deg; }
+}
+
+.btn-beam:not(:disabled):not(.button--loading)::after {
+  content:       '';
+  position:      absolute;
+  inset:         -2px;
+  border-radius: calc(0.25rem + 2px);
+  padding:       2px;
+  background: conic-gradient(
+    from var(--btn-beam-angle),
+    transparent 0deg,
+    rgba(var(--ch-blue), 0.6) 40deg,
+    rgba(var(--ch-blue-glow), 0.95) 58deg,
+    rgba(var(--ch-blue), 0.6) 76deg,
+    transparent 120deg,
+    transparent 360deg
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite:         exclude;
+  pointer-events:         none;
+  animation:              btnBorderBeam 3s linear infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .btn-beam::after { animation: none; }
+}
+
+/* ── Transición de entrada de página: CRT cyberpunk (F5) ────────── */
+
+.page-enter {
+  animation: cyberCRTEnter 380ms cubic-bezier(0, 0, 0.2, 1) both;
+  position: relative;
+  isolation: isolate;
+  /* Sin "filter" aquí a propósito: un ancestro con will-change: filter se
+     convierte en el contenedor de referencia de cualquier hijo con
+     position: fixed (en vez del viewport). AnalysisLoader (F15) y cualquier
+     otro overlay full-screen futuro dependen de posicionarse contra el
+     viewport real, no contra el <main>. */
+  will-change: clip-path;
+}
+
+.page-enter::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent 0px,
+    transparent 2px,
+    rgba(var(--ch-blue), 0.18) 2px,
+    rgba(var(--ch-blue), 0.18) 4px
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  animation:
+    scanlinesFade 500ms ease-out both,
+    scanlinesRoll 120ms linear 4;
+  z-index: 9999;
+}
+
+@keyframes cyberCRTEnter {
+  0%   {
+    -webkit-clip-path: inset(100dvh 0 0 0); clip-path: inset(100dvh 0 0 0);
+    filter: brightness(3.5) saturate(0) hue-rotate(90deg);
+  }
+  20%  {
+    -webkit-clip-path: inset(65dvh 0 0 0);  clip-path: inset(65dvh 0 0 0);
+    filter: brightness(3) saturate(0.1) hue-rotate(40deg);
+  }
+  38%  {
+    -webkit-clip-path: inset(32dvh 0 0 0);  clip-path: inset(32dvh 0 0 0);
+    filter: brightness(1.8) saturate(0.4) hue-rotate(15deg);
+  }
+  58%  {
+    -webkit-clip-path: inset(8dvh 0 0 0);   clip-path: inset(8dvh 0 0 0);
+    filter: brightness(1.2) saturate(0.8) hue-rotate(4deg);
+  }
+  75%  {
+    -webkit-clip-path: inset(0 0 0 0);      clip-path: inset(0 0 0 0);
+    filter: brightness(1.1) saturate(0.95);
+  }
+  88%  { filter: brightness(1.05) saturate(1.01); }
+  100% {
+    -webkit-clip-path: inset(0 0 0 0);      clip-path: inset(0 0 0 0);
+    filter: brightness(1) saturate(1) hue-rotate(0deg);
+  }
+}
+
+@keyframes scanlinesFade {
+  0%   { opacity: 1; }
+  70%  { opacity: 0.7; }
+  100% { opacity: 0; }
+}
+
+@keyframes scanlinesRoll {
+  from { background-position: 0 0; }
+  to   { background-position: 0 4px; }
+}
+
+/* Reduce-motion: desactiva todas las animaciones de transición de página */
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .page-enter::after {
+    animation: none;
+  }
+}
+
+/* Móvil (< 600px): sin filter — costoso en GPU de gama baja */
+@media (max-width: 599px) {
+  .page-enter {
+    animation: cyberCRTEnterMobile 280ms cubic-bezier(0, 0, 0.2, 1) both;
+    will-change: clip-path, opacity;
+  }
+  .page-enter::after {
+    animation: scanlinesFade 320ms ease-out both;
+  }
+}
+
+@keyframes cyberCRTEnterMobile {
+  0%   { -webkit-clip-path: inset(100dvh 0 0 0); clip-path: inset(100dvh 0 0 0); opacity: 0.6; }
+  50%  { -webkit-clip-path: inset(15dvh 0 0 0);  clip-path: inset(15dvh 0 0 0);  opacity: 0.9; }
+  100% { -webkit-clip-path: inset(0 0 0 0);      clip-path: inset(0 0 0 0);      opacity: 1; }
+}

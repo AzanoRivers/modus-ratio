@@ -1,0 +1,41 @@
+:root {
+  /* Grid */
+  --grid-size-default: 25px;
+  --grid-size-md:      35px;
+  --grid-size-lg:      40px;
+  --grid-size-xl:      45px;
+
+  /* Bordes neón */
+  --neon-border-width: 2px;
+
+  /* Scrollbar */
+  --scrollbar-width-global:    6px;
+  --scrollbar-width-component: 8px;
+
+  /* Glow spread para text-shadow */
+  --glow-spread-near:  4px;
+  --glow-spread-mid:   8px;
+  --glow-spread-far:   12px;
+  --glow-spread-outer: 16px;
+
+  /* Transiciones */
+  --transition-base:     200ms ease;
+  --transition-fast:     150ms ease;
+  --transition-fast-out: 150ms ease-out;
+
+  /* Canales RGB primarios (usar con rgba(var(--ch-*), opacidad)) */
+  --ch-blue:      11, 210, 255;
+  --ch-blue-glow: 102, 210, 255;
+  --ch-green:       4, 233, 207;
+  --ch-pink:      255, 105, 180;
+  --ch-yellow:    255, 200,  50;
+  --ch-gold:      255, 200,   0;
+  --ch-error:     255,  60,  60;
+  --ch-bg:          4,  21,  40;
+  --ch-fg:        237, 237, 237;
+  --ch-white:     255, 255, 255;
+
+  /* Semáforo: umbrales del ratio (se consumen en F16) */
+  --ratio-green-min:  70;
+  --ratio-yellow-min: 40;
+}

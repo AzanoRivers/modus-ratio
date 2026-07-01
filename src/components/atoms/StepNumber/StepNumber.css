@@ -1,0 +1,18 @@
+.step-number {
+  display:         inline-flex;
+  align-items:     center;
+  justify-content: center;
+  flex-shrink:      0;
+  width:            1.25rem;
+  height:           1.25rem;
+  border-radius:    50%;
+  border:           1px solid var(--neon-pink);
+  box-shadow:       0 0 6px var(--neon-pink-glow);
+  background:       rgba(var(--ch-pink), 0.1);
+  color:            var(--neon-pink);
+  font-family:      var(--font-orbitron);
+  font-size:        0.625rem;
+  font-weight:      700;
+  line-height:      1;
+  user-select:      none;
+}

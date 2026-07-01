@@ -1,0 +1,33 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import { Badge, HomeLogo, NeonBreakLine } from '@/components/atoms'
+import { FlowController } from '@/components/organisms'
+import { getDictionary } from '@/i18n'
+import '@/styles/home.css'
+
+const locale = Astro.locals.language
+const t = getDictionary(locale)
+---
+
+<BaseLayout title={`${t.siteName} - Modus`} description={t.home.subtitle} locale={locale}>
+  <section class="home">
+    <header class="home__header">
+      <div class="home__icon">
+        <HomeLogo />
+      </div>
+      <h1 class="home__title text-base md:text-2xl lg:text-3xl xl:text-2xl 2xl:text-3xl">{t.home.title}</h1>
+      <p class="home__subtitle text-sm md:text-xl lg:text-2xl xl:text-lg 2xl:text-xl">
+        {t.home.subtitle.split('Outfit')[0]}<span class="home__subtitle-rainbow">Outfit</span>
+      </p>
+      <div class="home__break">
+        <NeonBreakLine color="both" opacity={0.5} />
+      </div>
+    </header>
+
+    <p class="home__description">{t.home.description}</p>
+
+    <Badge id="privacy-warning" variant="info">{t.warnings.privacy}</Badge>
+
+    <FlowController t={t} client:idle />
+  </section>
+</BaseLayout>

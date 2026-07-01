@@ -1,0 +1,145 @@
+---
+import { AzanoLabsLogo, CreatedBySignature } from '@/components/atoms'
+import { OtherProjectsPanel, type OtherProjectItem } from '@/components/organisms'
+import { getDictionary } from '@/i18n'
+import { getLocale } from '@/utils/getLocale'
+import '@/styles/globals.css'
+import type { Locale } from '@/i18n'
+
+interface Props {
+  title: string
+  description?: string
+  locale?: Locale
+}
+
+const { title, description = '', locale: localeProp } = Astro.props
+const locale: Locale = localeProp ?? Astro.locals.language ?? getLocale(Astro.request)
+const t = getDictionary(locale)
+const nav = t.nav
+
+const SITE = 'https://www.azanolabs.com'
+
+const otherProjects: OtherProjectItem[] = [
+  {
+    href: `${SITE}/codepass`,
+    title: nav.projects.codepass.title,
+    description: nav.projects.codepass.description,
+    iconKey: 'Shield',
+    accent: 'green',
+    tag: '06',
+    ctaLabel: nav.cta,
+    external: true,
+  },
+  {
+    href: `${SITE}/quantum`,
+    title: nav.projects.quantum.title,
+    description: nav.projects.quantum.description,
+    iconKey: 'TrendingUp',
+    accent: 'blue',
+    tag: '07',
+    ctaLabel: nav.cta,
+    external: true,
+  },
+]
+
+const labProjects: OtherProjectItem[] = [
+  {
+    href: `${SITE}/cartum`,
+    title: nav.projects.cartum.title,
+    description: nav.projects.cartum.description,
+    iconKey: 'Layers',
+    accent: 'blue',
+    tag: '01',
+    ctaLabel: nav.cta,
+    external: true,
+  },
+  {
+    href: `${SITE}/suportum`,
+    title: nav.projects.suportum.title,
+    description: nav.projects.suportum.description,
+    iconKey: 'MessageSquare',
+    accent: 'blue',
+    tag: '02',
+    ctaLabel: nav.cta,
+    build: true,
+    comingSoonLabel: nav.comingSoon,
+    external: true,
+  },
+  {
+    href: `${SITE}/vamo-gps`,
+    title: nav.projects.vamoGps.title,
+    description: nav.projects.vamoGps.description,
+    iconKey: 'MapPin',
+    accent: 'pink',
+    tag: '03',
+    ctaLabel: nav.cta,
+    build: true,
+    comingSoonLabel: nav.comingSoon,
+    external: true,
+  },
+  {
+    href: `${SITE}/pixelatam`,
+    title: nav.projects.pixelatam.title,
+    description: nav.projects.pixelatam.description,
+    iconKey: 'Gamepad',
+    accent: 'pink',
+    tag: '04',
+    ctaLabel: nav.cta,
+    build: true,
+    comingSoonLabel: nav.comingSoon,
+    external: true,
+  },
+  {
+    href: `${SITE}/plantum`,
+    title: nav.projects.plantum.title,
+    description: nav.projects.plantum.description,
+    iconKey: 'Sprout',
+    accent: 'green',
+    tag: '05',
+    ctaLabel: nav.cta,
+    build: true,
+    comingSoonLabel: nav.comingSoon,
+    external: true,
+  },
+]
+---
+
+<!doctype html>
+<html lang={locale} class="overflow-x-hidden">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:type" content="website" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  </head>
+  <body class="antialiased w-full flex flex-col bg-az-grid">
+    <main class="page-enter flex-1 flex flex-col relative z-10">
+      <article class="az-logo-anchor">
+        <AzanoLabsLogo label={t.siteName} alt={nav.logoAlt} />
+      </article>
+      <slot />
+    </main>
+    <footer id="site-footer" class="shrink-0 pt-24 pb-3 2xl:pt-3 flex justify-center">
+      <CreatedBySignature label={nav.createdBy} />
+    </footer>
+    <OtherProjectsPanel
+      label={nav.otherProjects}
+      labLabel={nav.laboratory}
+      ctaLabel={nav.cta}
+      comingSoonLabel={nav.comingSoon}
+      closeLabel={t.common.close}
+      projects={otherProjects}
+      labProjects={labProjects}
+      client:load
+    />
+  </body>
+  <script>
+    import { setupGlobalAudio, preloadSounds } from '@/utils/audio'
+    setupGlobalAudio()
+    preloadSounds()
+  </script>
+</html>

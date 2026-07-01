@@ -1,0 +1,87 @@
+.tooltip {
+  position: relative;
+  display:  inline-flex;
+}
+
+.tooltip__trigger {
+  display:    inline-flex;
+  align-items: center;
+  color:      rgba(var(--ch-fg), 0.4);
+  cursor:     help;
+  transition: color var(--transition-base);
+}
+
+.tooltip__trigger:hover,
+.tooltip__trigger:focus-visible {
+  color: var(--neon-blue);
+}
+
+.tooltip__trigger:focus-visible {
+  outline:        2px solid var(--neon-blue);
+  outline-offset: 2px;
+  border-radius:  2px;
+}
+
+.tooltip__bubble {
+  position:      absolute;
+  top:           calc(100% + 0.5rem);
+  left:          0;
+  width:         max-content;
+  max-width:     13rem;
+  padding:       0.5rem 0.625rem;
+  border-radius: 0.375rem;
+  border:        1px solid rgba(var(--ch-blue), 0.4);
+  background:    rgba(var(--ch-bg), 0.95);
+  box-shadow:    0 0 10px var(--neon-blue-glow);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  font-family:    var(--font-mono);
+  font-size:      0.6875rem;
+  font-weight:    400;
+  line-height:    1.5;
+  color:          rgba(var(--ch-fg), 0.9);
+  text-align:     left;
+  text-transform: none;
+  letter-spacing: normal;
+  opacity:        0;
+  visibility:     hidden;
+  pointer-events: none;
+  z-index:        30;
+  transition:     opacity 0.15s ease;
+}
+
+.tooltip__bubble::before {
+  content:          '';
+  position:         absolute;
+  bottom:           100%;
+  left:             0.5rem;
+  border:           0.3125rem solid transparent;
+  border-bottom-color: rgba(var(--ch-blue), 0.4);
+}
+
+.tooltip__trigger:hover + .tooltip__bubble,
+.tooltip__trigger:focus-visible + .tooltip__bubble {
+  opacity:    1;
+  visibility: visible;
+  animation:  ctTooltipGlitchIn 180ms steps(2, end) both;
+}
+
+@keyframes ctTooltipGlitchIn {
+  0%   { transform: translateX(-0.25rem);  opacity: 0;   }
+  50%  { transform: translateX(0.1875rem); opacity: 0.8; }
+  100% { transform: translateX(0);         opacity: 1;   }
+}
+
+@media (max-width: 22.5rem) {
+  .tooltip__bubble {
+    max-width: 9.5rem;
+    font-size: 0.625rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tooltip__trigger:hover + .tooltip__bubble,
+  .tooltip__trigger:focus-visible + .tooltip__bubble {
+    animation: none;
+  }
+}

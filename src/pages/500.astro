@@ -1,0 +1,26 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+import ErrorDisplay from '@/components/templates/ErrorDisplay/ErrorDisplay.astro'
+import { getDictionary } from '@/i18n'
+
+// try/catch safety net: Astro.locals puede no estar disponible si el middleware falló
+let locale: 'es' | 'en' = 'es'
+try {
+  locale = Astro.locals.language
+} catch {
+  // fallback silencioso a 'es'
+}
+
+const t = getDictionary(locale)
+const e = t.errors.serverError
+---
+
+<BaseLayout title={`${t.siteName} · ${e.code}`} locale={locale}>
+  <ErrorDisplay
+    code={e.code}
+    title={e.title}
+    message={e.message}
+    cta={e.cta}
+    colorClass="text-neon-glow-pink"
+  />
+</BaseLayout>

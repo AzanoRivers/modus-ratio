@@ -1,0 +1,103 @@
+.home-form__panel {
+  width: 100%;
+  border: 1px solid rgba(var(--ch-blue), 0.25);
+  border-radius: 0.5rem;
+  background: rgba(var(--ch-bg), 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow: hidden;
+}
+
+.home-form__body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.home-form__optional {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 600px) {
+  .home-form__optional {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  /* SkinColorSelector centrado en su celda */
+  .home-form__optional > :nth-child(2) {
+    justify-self: center;
+    align-self: center;
+  }
+
+  /* BuildSelector spans full width so optional section stays balanced with 3 items */
+  .home-form__optional > :last-child {
+    grid-column: 1 / -1;
+  }
+}
+
+.home-form__body-note {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--foreground);
+  opacity: 0.45;
+  line-height: 1.65;
+  padding-left: 0.75rem;
+  border-left: 2px solid rgba(var(--ch-blue), 0.18);
+}
+
+@media (min-width: 1200px) {
+  .home-form__body-note {
+    font-size: 0.75rem;
+  }
+}
+
+.home-form__submit {
+  width: 100%;
+  justify-content: center;
+}
+
+@media (min-width: 600px) {
+  .home-form__submit {
+    width: auto;
+    align-self: flex-end;
+  }
+}
+
+/* ── Desktop 2-column layout ─────────────────────────────────── */
+
+@media (min-width: 1200px) {
+  .home-form__body {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    align-items: start;
+  }
+
+  /* Dropzone: col izquierda, solo primera fila (cuadrada por aspect-ratio) */
+  .home-form__body > :first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  /* StyleSelector: col derecha, primera fila */
+  .home-form__body > :nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  /* Todo lo demás fluye en ancho completo */
+  .home-form__body > :nth-child(n+3) {
+    grid-column: 1 / -1;
+  }
+
+  .home-form__submit {
+    width: auto;
+    justify-self: end;
+  }
+}
+

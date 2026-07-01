@@ -1,0 +1,83 @@
+.dimension-bar {
+  display:        flex;
+  flex-direction: column;
+  gap:            0.375rem;
+}
+
+.dimension-bar__header {
+  display:         flex;
+  justify-content: space-between;
+  align-items:     baseline;
+}
+
+.dimension-bar__label-group {
+  display:     flex;
+  align-items: center;
+  gap:         0.375rem;
+}
+
+.dimension-bar__label {
+  font-family:    var(--font-mono);
+  font-size:      0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color:          rgba(var(--ch-fg), 0.5);
+}
+
+.dimension-bar__info-icon {
+  width:  0.8125rem;
+  height: 0.8125rem;
+}
+
+.dimension-bar__score {
+  font-family: var(--font-orbitron);
+  font-size:   1rem;
+  font-weight: 700;
+  color:       var(--foreground);
+}
+
+.dimension-bar__track {
+  height:        0.375rem;
+  border-radius: 9999px;
+  background:    rgba(var(--ch-blue), 0.06);
+  overflow:      hidden;
+}
+
+.dimension-bar__fill {
+  height:           100%;
+  border-radius:    9999px;
+  width:            calc(var(--score, 0) * 1%);
+  transform-origin: left center;
+  animation:        ctBarFill 700ms cubic-bezier(0.4, 0, 0.2, 1) both;
+  animation-delay:  calc(180ms + var(--i, 0) * 130ms);
+}
+
+.dimension-bar--green  { background-color: var(--color-success); box-shadow: 0 0 6px var(--color-success-glow); }
+.dimension-bar--yellow { background-color: var(--color-warning); box-shadow: 0 0 6px var(--color-warning-glow); }
+.dimension-bar--red    { background-color: var(--color-error);   box-shadow: 0 0 6px var(--color-error-glow); }
+
+.dimension-bar__detail {
+  font-family:   var(--font-mono);
+  font-size:     0.75rem;
+  line-height:   1.55;
+  color:         rgba(var(--ch-fg), 0.85);
+  margin:        0;
+  padding:       0.625rem 0.75rem;
+  border-radius: 0.375rem;
+  border-left:   2px solid transparent;
+}
+
+.dimension-bar__detail--green  { background: rgba(var(--ch-green),  0.06); border-left-color: rgba(var(--ch-green),  0.45); }
+.dimension-bar__detail--yellow { background: rgba(var(--ch-yellow), 0.06); border-left-color: rgba(var(--ch-yellow), 0.45); }
+.dimension-bar__detail--red    { background: rgba(var(--ch-error),  0.06); border-left-color: rgba(var(--ch-error),  0.45); }
+
+@keyframes ctBarFill {
+  from { width: 0; }
+  to   { width: calc(var(--score, 0) * 1%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dimension-bar__fill {
+    animation: none;
+  }
+}

@@ -1,0 +1,105 @@
+.build-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.build-selector__label {
+  font-family: var(--font-orbitron);
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--foreground);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.build-selector__optional {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  opacity: 0.45;
+}
+
+.build-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.build-group__label {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--foreground);
+  opacity: 0.6;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.build-group__chips {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+}
+
+@media (min-width: 600px) {
+  .build-group__chips {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+/* Deliberate design choice: green accent to differentiate from StyleSelector (blue) */
+.build-chip {
+  padding: 0.375rem 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--foreground);
+  background: transparent;
+  border: 1px solid rgba(var(--ch-green), 0.25);
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: border-color var(--transition-base), background var(--transition-base), box-shadow var(--transition-base);
+  text-align: center;
+}
+
+.build-chip:hover {
+  border-color: rgba(var(--ch-green), 0.6);
+}
+
+.build-chip:focus-visible {
+  outline: 2px solid var(--neon-green);
+  outline-offset: 2px;
+}
+
+.build-chip--active {
+  color: var(--neon-green);
+  border-color: var(--neon-green);
+  background: rgba(var(--ch-green), 0.08);
+  box-shadow: 0 0 8px var(--neon-green-glow);
+}
+
+@media (min-width: 1200px) {
+  .build-selector__label {
+    font-size: 0.9375rem;
+  }
+
+  .build-selector__optional {
+    font-size: 0.75rem;
+  }
+
+  .build-group__label {
+    font-size: 0.8125rem;
+  }
+
+  .build-chip {
+    font-size: 0.8125rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .build-chip { transition: none; }
+}

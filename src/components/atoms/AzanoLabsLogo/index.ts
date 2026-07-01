@@ -1,0 +1,1 @@
+export { AzanoLabsLogo } from './AzanoLabsLogo'

@@ -1,0 +1,147 @@
+/* ─── Layout: panel en línea, ocupa el lugar del formulario ─────────────────── */
+
+.analysis-loader {
+  position:        relative;
+  overflow:        hidden;
+  display:         flex;
+  flex-direction:  column;
+  align-items:     center;
+  justify-content: center;
+  gap:             1.5rem;
+  min-height:      20rem;
+  padding:         2rem 1.25rem;
+  width:           100%;
+  border:          1px solid rgba(var(--ch-blue), 0.25);
+  border-radius:   0.5rem;
+  background:      rgba(var(--ch-bg), 0.75);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  text-align:      center;
+}
+
+/* ─── Campo de emojis flotantes ──────────────────────────────────────────────
+   Cada partícula parte del centro y viaja en línea recta hacia su ángulo
+   aleatorio (truco: rotate -> translateX -> rotate inverso, así el emoji
+   se desplaza en radial sin girar sobre sí mismo). Quedan recortadas por
+   el overflow:hidden del panel, así que "llegan al borde" y desaparecen. */
+
+.analysis-loader__emoji-field {
+  position:       absolute;
+  inset:          0;
+  overflow:       hidden;
+  pointer-events: none;
+}
+
+.analysis-loader__emoji {
+  position:  absolute;
+  top:       50%;
+  left:      50%;
+  font-size: 1.5rem;
+  opacity:   0;
+  transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0) rotate(calc(var(--angle) * -1));
+  animation: analysisLoaderEmojiFloat var(--duration) ease-out var(--delay) infinite;
+}
+
+@keyframes analysisLoaderEmojiFloat {
+  0% {
+    opacity:   0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(0) rotate(calc(var(--angle) * -1)) scale(0.5);
+  }
+  18% {
+    opacity: 0.5;
+  }
+  65% {
+    opacity: 0.28;
+  }
+  100% {
+    opacity:   0;
+    transform: translate(-50%, -50%) rotate(var(--angle)) translateX(var(--distance)) rotate(calc(var(--angle) * -1)) scale(1.15);
+  }
+}
+
+/* ─── Contenido central ──────────────────────────────────────────────────── */
+
+.analysis-loader__content {
+  position:       relative;
+  z-index:        1;
+  display:        flex;
+  flex-direction: column;
+  align-items:    center;
+  gap:            0.875rem;
+  max-width:      22rem;
+}
+
+.analysis-loader__message {
+  margin:      0;
+  min-height:  2.75rem;
+  display:     flex;
+  align-items: center;
+  font-family: var(--font-orbitron);
+  font-size:   0.9375rem;
+  font-weight: 700;
+  line-height: 1.4;
+  color:       var(--color-neon-pink);
+  animation:   analysisLoaderMsgIn 420ms ease-out both;
+}
+
+@keyframes analysisLoaderMsgIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.analysis-loader__status {
+  margin:         0;
+  font-family:    var(--font-mono);
+  font-size:      0.6875rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color:          var(--color-neon-blue);
+  opacity:        0.75;
+}
+
+/* ─── Barra de progreso ──────────────────────────────────────────────────── */
+
+.analysis-loader__progress-track {
+  position:      relative;
+  width:         100%;
+  max-width:     14rem;
+  height:        0.25rem;
+  border-radius: 9999px;
+  overflow:      hidden;
+  background:    rgba(var(--ch-blue), 0.1);
+}
+
+.analysis-loader__progress-fill {
+  height:        100%;
+  border-radius: 9999px;
+  width:         calc(var(--progress, 0) * 100%);
+  background:    linear-gradient(90deg, var(--color-neon-blue), var(--color-neon-pink));
+  transition:    width 200ms ease-out;
+}
+
+.analysis-loader__progress-fill--indeterminate {
+  width:     40%;
+  animation: analysisLoaderIndeterminate 1.3s ease-in-out infinite;
+}
+
+@keyframes analysisLoaderIndeterminate {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}
+
+/* ─── Reduce-motion ──────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+  .analysis-loader__emoji-field {
+    display: none;
+  }
+
+  .analysis-loader__message {
+    animation: none;
+  }
+
+  .analysis-loader__progress-fill,
+  .analysis-loader__progress-fill--indeterminate {
+    animation: none;
+  }
+}

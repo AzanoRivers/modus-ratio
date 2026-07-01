@@ -1,0 +1,63 @@
+.cyber-transition[data-effect="scanIn"] {
+  animation: ctScanIn 180ms ease-out both;
+}
+
+.cyber-transition[data-effect="slideUp"] {
+  animation: ctSlideUp 200ms ease-out both;
+}
+
+.cyber-transition[data-effect="glitch"] {
+  animation: ctGlitchIn 100ms steps(1) both;
+}
+
+@keyframes ctScanIn {
+  from {
+    -webkit-clip-path: inset(0 0 100% 0);
+    clip-path: inset(0 0 100% 0);
+    opacity: 0.4;
+  }
+  to {
+    -webkit-clip-path: inset(0 0 0% 0);
+    clip-path: inset(0 0 0% 0);
+    opacity: 1;
+  }
+}
+
+@keyframes ctSlideUp {
+  from { transform: translateY(0.5rem); opacity: 0; }
+  to   { transform: translateY(0);      opacity: 1; }
+}
+
+@keyframes ctGlitchIn {
+  0%   { transform: translateX(-0.25rem);  opacity: 0; }
+  50%  { transform: translateX(0.1875rem); opacity: 0.8; }
+  100% { transform: translateX(0);         opacity: 1; }
+}
+
+/* Salida glitch: misma especificidad que las reglas [data-effect] de arriba,
+   así que gana por venir después en el mismo archivo (sin necesitar !important). */
+.cyber-transition.cyber-transition--exiting {
+  animation: ctGlitchOut 320ms steps(10) both;
+}
+
+@keyframes ctGlitchOut {
+  0%   { opacity: 1;    transform: translateX(0);        clip-path: inset(0 0 0% 0);   filter: none; }
+  8%   { opacity: 1;    transform: translateX(-0.3rem);  clip-path: inset(8% 0 62% 0); filter: drop-shadow(2px 0 0 rgba(255, 45, 120, 0.75)) drop-shadow(-2px 0 0 rgba(45, 220, 255, 0.75)); }
+  16%  { opacity: 0.95; transform: translateX(0.25rem);  clip-path: inset(55% 0 5% 0); }
+  24%  { opacity: 0.9;  transform: translateX(-0.2rem);  clip-path: inset(20% 0 45% 0); }
+  32%  { opacity: 0.75; transform: translateX(0.3rem);   clip-path: inset(0 0 0% 0);   filter: hue-rotate(35deg) saturate(2.2); }
+  45%  { opacity: 0.55; transform: translateX(-0.35rem); clip-path: inset(35% 0 10% 0); }
+  60%  { opacity: 0.35; transform: translateX(0.15rem);  clip-path: inset(5% 0 70% 0); }
+  78%  { opacity: 0.15; transform: translateX(-0.1rem); }
+  100% { opacity: 0;    transform: translateX(0);        clip-path: inset(0 0 100% 0); filter: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cyber-transition[data-effect] {
+    animation: none;
+  }
+
+  .cyber-transition.cyber-transition--exiting {
+    animation: none;
+  }
+}

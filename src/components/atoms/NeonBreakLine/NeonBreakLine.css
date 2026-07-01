@@ -1,0 +1,41 @@
+.neon-break-line {
+  display: block;
+  opacity: var(--nbl-opacity, 0.6);
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.neon-break-line--horizontal {
+  height: 1px;
+  width: 100%;
+}
+
+.neon-break-line--vertical {
+  width: 1px;
+  height: 100%;
+}
+
+.neon-break-line--blue {
+  background: var(--neon-blue);
+  box-shadow:
+    0 0 4px var(--neon-blue),
+    0 0 8px var(--neon-blue),
+    0 0 12px var(--neon-blue-glow);
+}
+
+.neon-break-line--pink {
+  background: var(--neon-pink);
+  box-shadow:
+    0 0 4px var(--neon-pink),
+    0 0 8px var(--neon-pink),
+    0 0 12px var(--neon-pink-glow);
+}
+
+.neon-break-line--both {
+  background: linear-gradient(90deg, var(--neon-pink) 0%, var(--neon-blue) 100%);
+  box-shadow:
+    0 0 4px var(--neon-pink),
+    0 0 8px var(--neon-blue),
+    0 0 12px var(--neon-pink-glow),
+    0 0 16px var(--neon-blue-glow);
+}

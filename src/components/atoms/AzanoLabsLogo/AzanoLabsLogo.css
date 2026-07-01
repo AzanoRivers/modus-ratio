@@ -1,0 +1,64 @@
+.az-logo-anchor {
+  position: absolute;
+  left: 1.25rem;
+  top: -1.5rem;
+  z-index: 20;
+}
+
+.az-logo__wrap {
+  position: relative;
+  display: block;
+  width: 160px;
+  height: 160px;
+  user-select: none;
+  text-decoration: none;
+  pointer-events: auto;
+}
+
+.az-logo__img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 5px var(--logo-glow-white-inner))
+    drop-shadow(0 -3px 8px var(--logo-glow-pink-near))
+    drop-shadow(0 3px 8px var(--logo-glow-blue-near))
+    drop-shadow(0 4px 14px var(--logo-glow-blue-far));
+  will-change: opacity;
+  animation: az-logo-flicker 7.4s ease-in-out infinite;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Por debajo de xl (600px = 37.5rem): tratamiento mobile, menos glow */
+@media (max-width: 37.4375rem) {
+  .az-logo__img {
+    filter:
+      drop-shadow(0 0 4px var(--logo-glow-white-inner))
+      drop-shadow(0 3px 10px var(--logo-glow-blue-near));
+  }
+}
+
+@media (min-width: 360px) {
+  .az-logo__wrap { width: 200px; height: 200px; }
+}
+
+@media (min-width: 440px) {
+  .az-logo__wrap { width: 280px; height: 280px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .az-logo__img { animation: none; }
+}
+
+@keyframes az-logo-flicker {
+  0%   { opacity: 0.3; }
+  2%   { opacity: 1;   }
+  56%  { opacity: 1;   }
+  58%  { opacity: 0.3; }
+  60%  { opacity: 1;   }
+  73%  { opacity: 1;   }
+  75%  { opacity: 0.3; }
+  78%  { opacity: 1;   }
+  100% { opacity: 1;   }
+}

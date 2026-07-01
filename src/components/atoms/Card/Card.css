@@ -1,0 +1,26 @@
+.card {
+  padding: 1.25rem;
+  border-radius: 0.5rem;
+  background: rgba(var(--ch-bg), 0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.card--default {
+  border: 1px solid rgba(var(--ch-white), 0.1);
+}
+
+.card--blue {
+  border: 1px solid var(--neon-blue);
+  box-shadow: 0 0 10px var(--neon-blue-glow);
+}
+
+.card--pink {
+  border: 1px solid var(--neon-pink);
+  box-shadow: 0 0 10px var(--neon-pink-glow);
+}
+
+.card--green {
+  border: 1px solid var(--neon-green);
+  box-shadow: 0 0 10px var(--neon-green-glow);
+}
