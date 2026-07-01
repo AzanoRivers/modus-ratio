@@ -2,6 +2,8 @@
 
 # Modus Ratio
 
+🔗 **[modus.azanolabs.com](https://modus.azanolabs.com)**
+
 ![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
@@ -106,4 +108,4 @@ src/
 
 ## Deploy
 
-Se despliega en Vercel con el adapter `@astrojs/vercel`, con `maxDuration: 60` configurado explícitamente (`astro.config.mjs`) porque el pipeline de IA (descripción + scoring) puede tardar decenas de segundos.
+Se despliega en Vercel con el adapter `@astrojs/vercel`, con `maxDuration: 60` configurado explícitamente (`astro.config.mjs`) porque el pipeline de IA (descripción + scoring) puede tardar decenas de segundos. Producción: [modus.azanolabs.com](https://modus.azanolabs.com).
