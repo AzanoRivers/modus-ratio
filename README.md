@@ -1,4 +1,18 @@
+**Español** · [English](./README.en.md)
+
 # Modus Ratio
+
+![Astro](https://img.shields.io/badge/Astro-7-BC52EE?logo=astro&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4-06B6D4?logo=tailwindcss&logoColor=white)
+![Zustand](https://img.shields.io/badge/Zustand-5-443E38)
+![OpenAI](https://img.shields.io/badge/OpenAI-GPT--4o--mini-412991?logo=openai&logoColor=white)
+![Cloudflare R2](https://img.shields.io/badge/Cloudflare_R2-F38020?logo=cloudflare&logoColor=white)
+![Redis](https://img.shields.io/badge/Redis-DC382D?logo=redis&logoColor=white)
+![Vercel](https://img.shields.io/badge/Vercel-000000?logo=vercel&logoColor=white)
+
+Creado y diseñado con ❤️ por [AzanoRivers](https://azanorivers.com)
 
 Analizador de outfits con IA para AzanoLabs. El usuario sube una foto de su outfit, indica el estilo que quiere lograr (y opcionalmente altura, tono de piel, contextura y preferencia de género), y la app devuelve un puntaje por dimensión, alertas, un punto fuerte y recomendaciones concretas, todo personalizado a la imagen real.
 

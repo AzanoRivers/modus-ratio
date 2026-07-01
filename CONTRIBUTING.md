@@ -1,3 +1,5 @@
+**Español** · [English](./CONTRIBUTING.en.md)
+
 # Contributing: Modus Ratio
 
 Para una explicación del proyecto (qué hace, cómo maneja las imágenes, privacidad, límites de uso), ver el [README](./README.md). Esta guía es sobre cómo trabajar en el código.
