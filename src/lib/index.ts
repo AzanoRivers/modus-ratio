@@ -34,7 +34,7 @@ export type {
   AnalysisResults, AnalysisErrorCode,
 }                                                           from './analysisTypes'
 export { CORPUS_DESCRIPTIONS }                              from './styleCorpus'
-export { minimax, MINIMAX_MODEL }                           from './minimax'
-export { analyzeWithMinimax }                               from './analyzeWithMinimax'
+export { scoringClient, SCORING_MODEL }                     from './scoringClient'
+export { analyzeOutfitScore }                                from './analyzeOutfitScore'
 export { runAnalysisPipeline }                              from './analysisPipeline'
 export type { PipelineInput }                               from './analysisPipeline'

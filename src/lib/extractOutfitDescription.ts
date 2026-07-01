@@ -53,12 +53,13 @@ export async function extractOutfitDescription(
           },
         ],
       },
-      // Presupuesto de tiempo compartido con Minimax bajo el límite de 60s de
-      // Vercel (ver astro.config.mjs): este paso corre primero y debe dejarle
-      // margen al de Minimax, que es el más lento de los dos. maxRetries: 0
-      // es obligatorio: el SDK de openai reintenta 2 veces por defecto, lo
-      // que multiplicaría este timeout por 3 en el peor caso (ver el mismo
-      // fix en analyzeWithMinimax.ts para el detalle de por qué importa).
+      // Presupuesto de tiempo compartido con el modelo de scoring bajo el
+      // límite de 60s de Vercel (ver astro.config.mjs): este paso corre
+      // primero y debe dejarle margen al de scoring, que es el más lento de
+      // los dos. maxRetries: 0 es obligatorio: el SDK de openai reintenta 2
+      // veces por defecto, lo que multiplicaría este timeout por 3 en el
+      // peor caso (ver el mismo fix en analyzeOutfitScore.ts para el detalle
+      // de por qué importa).
       { timeout: 15_000, maxRetries: 0 },
     )
     content = response.choices[0]?.message?.content

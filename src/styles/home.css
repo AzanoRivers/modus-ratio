@@ -3,9 +3,13 @@
   flex-direction: column;
   align-items: center;
   gap: 1.5rem;
-  padding: 0 1rem 2rem;
+  /* Ajustado (no a ras): menos aire perdido entre el borde de pantalla y el
+     formulario en mobile. Se restaura el valor original a partir de 600px.
+     La visibilidad del borde de .home-form__panel se resuelve con más
+     contraste ahí mismo (ver HomeForm.css), no dándole más espacio acá. */
+  padding: 0 0.625rem 2rem;
   width: 100%;
-  max-width: min(640px, 100% - 2rem);
+  max-width: min(640px, 100% - 1.25rem);
   margin: 0 auto;
   margin-top: 7rem;
 }
@@ -24,6 +28,8 @@
 
 @media (min-width: 600px) {
   .home {
+    padding: 0 1rem 2rem;
+    max-width: min(640px, 100% - 2rem);
     margin-top: 8rem;
   }
 }

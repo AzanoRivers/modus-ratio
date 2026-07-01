@@ -55,8 +55,8 @@ export type RecommendationKey = (typeof RECOMMENDATION_KEYS)[number]
 
 export interface DimensionResult {
   score:  number
-  // Frase personalizada de Minimax explicando ESTA puntuación para ESTE
-  // outfit, en el idioma del usuario. Nunca texto genérico de plantilla.
+  // Frase personalizada del modelo de scoring explicando ESTA puntuación
+  // para ESTE outfit, en el idioma del usuario. Nunca texto genérico de plantilla.
   detail: string
 }
 
@@ -76,7 +76,7 @@ export interface AnalysisResults {
 
 export type AnalysisErrorCode =
   | 'EXTRACTION_FAILED'
-  | 'MINIMAX_FAILED'
+  | 'SCORING_FAILED'
   | 'INVALID_RESPONSE'
   | 'EMPTY_RESPONSE'
   | 'NO_PERSON_DETECTED'

@@ -1,8 +1,11 @@
 .home-form__panel {
   width: 100%;
-  border: 1px solid rgba(var(--ch-blue), 0.25);
+  border: 1px solid rgba(var(--ch-blue), 0.55);
   border-radius: 0.5rem;
   background: rgba(var(--ch-bg), 0.75);
+  /* Refuerza el borde con un glow sutil hacia afuera: se ve como un borde
+     definido sin depender de cuánto espacio libre haya alrededor. */
+  box-shadow: 0 0 0 1px rgba(var(--ch-blue), 0.15);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   overflow: hidden;

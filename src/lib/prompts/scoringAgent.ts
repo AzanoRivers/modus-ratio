@@ -46,7 +46,7 @@ function buildCorpusList(): string {
     .join('\n')
 }
 
-export function buildMinimaxSystemPrompt(locale: 'es' | 'en'): string {
+export function buildScoringSystemPrompt(locale: 'es' | 'en'): string {
   const localeInstruction = locale === 'es'
     ? 'Spanish (LATAM-neutral, informal "tú")'
     : 'English'
@@ -70,6 +70,7 @@ export function buildMinimaxSystemPrompt(locale: 'es' | 'en'): string {
 - Never restate the corpus definition or the dimension definition verbatim. Those are internal references for you, not sentences to copy.
 - Never use generic filler ("the outfit works well", "colors are nice", "consider improving the fit"). Every sentence must be traceable to this specific description.
 - Write the "detail" text in ${localeInstruction}. Everything else (JSON keys, the fixed key values like "colors_clash" or "waist_definition") stays in English exactly as listed, only the free-text "detail" values are written in that language.
+- If writing in Spanish: translate the garment concept from the OUTFIT DESCRIPTION into everyday Spanish, never transliterate the English word. Common fixes: "denim" -> "mezclilla" or "jean" (never "denim"), "hoodie" -> "buzo con capucha" or "sudadera con gorro", "sneakers" -> "zapatillas" o "tenis" (never "sneakers"), "oversized" -> "holgado/a", "print" -> "estampado". Say it the way a native Spanish speaker actually talks about clothes.
 
 ## SCORING DIMENSIONS (0-100, integer each)
 Calibration bands, applied identically across all dimensions:
@@ -214,7 +215,7 @@ Respond ONLY with a valid JSON object. No explanation, no markdown, no preamble,
 "warnings" has 0-3 items (severity order), "recommendations" has 0-5 items (priority order). Every "detail" follows the WRITING rules above: specific, warm, references something real from the description, never generic.`
 }
 
-export function buildMinimaxUserPrompt(
+export function buildScoringUserPrompt(
   description: OutfitDescription,
   formParams:  FormParams,
 ): string {

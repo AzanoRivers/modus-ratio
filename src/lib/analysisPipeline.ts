@@ -2,7 +2,7 @@ import type { AnalysisResults } from '@/lib/analysisTypes'
 import { AnalysisError, REJECTION_ERROR_CODES } from '@/lib/analysisTypes'
 import { extractOutfitDescription } from '@/lib/extractOutfitDescription'
 import { ExtractionError } from '@/lib/outfitDescription'
-import { analyzeWithMinimax } from '@/lib/analyzeWithMinimax'
+import { analyzeOutfitScore } from '@/lib/analyzeOutfitScore'
 import type { FormParams } from '@/components/organisms/HomeForm'
 
 export { AnalysisError }
@@ -34,5 +34,5 @@ export async function runAnalysisPipeline(
     throw new AnalysisError('EXTRACTION_FAILED', 'Unexpected error during extraction')
   }
 
-  return analyzeWithMinimax(description, input.formParams, input.locale)
+  return analyzeOutfitScore(description, input.formParams, input.locale)
 }

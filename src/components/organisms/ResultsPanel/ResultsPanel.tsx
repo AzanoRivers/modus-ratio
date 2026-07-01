@@ -3,7 +3,7 @@ import { useAppStore }  from '@/store'
 import { DimensionBar } from '@/components/molecules'
 import { Badge, Button, NeonBreakLine, Skeleton } from '@/components/atoms'
 // Import directo (no el barrel '@/lib'): ese barrel también re-exporta módulos
-// server-only (env, redis, r2, openai, minimax), que leen variables de entorno
+// server-only (env, redis, r2, openai, scoringClient), que leen variables de entorno
 // al cargar el módulo. Como ResultsPanel se hidrata en el cliente, importar el
 // barrel completo rompe la hidratación buscando secretos que no existen en el navegador.
 import { DIMENSION_KEYS } from '@/lib/analysisTypes'

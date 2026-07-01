@@ -7,8 +7,8 @@ import {
   AnalysisError,
 } from '@/lib/analysisTypes'
 import type { AnalysisResults, DimensionKey, DimensionResult, KeyedDetail } from '@/lib/analysisTypes'
-import { minimax, MINIMAX_MODEL } from '@/lib/minimax'
-import { buildMinimaxSystemPrompt, buildMinimaxUserPrompt } from '@/lib/prompts/minimaxM3'
+import { scoringClient, SCORING_MODEL } from '@/lib/scoringClient'
+import { buildScoringSystemPrompt, buildScoringUserPrompt } from '@/lib/prompts/scoringAgent'
 import type { OutfitDescription } from '@/lib/outfitDescription'
 import type { FormParams } from '@/components/organisms/HomeForm'
 
@@ -32,11 +32,11 @@ function readDetail(value: unknown): string | null {
 // (no embebido en `content`), así que en la práctica esto ya no encuentra
 // nada que cortar. Se deja como red de seguridad: si el modelo de scoring
 // vuelve a cambiar a uno que sí embeba <think>...</think> o un fence de
-// markdown en el content (como pasaba con minimax-m3), esto sigue
-// protegiendo el parseo sin tener que acordarse de tocar este archivo.
-// Se despoja la marca de apertura y la de cierre por separado (no con un
-// único regex ancla-a-ancla): si la respuesta se truncó a mitad del JSON
-// por max_tokens, el cierre ``` nunca llega, y un regex que exige ambos
+// markdown en el content (como pasaba con minimax-m3, el modelo anterior),
+// esto sigue protegiendo el parseo sin tener que acordarse de tocar este
+// archivo. Se despoja la marca de apertura y la de cierre por separado (no
+// con un único regex ancla-a-ancla): si la respuesta se truncó a mitad del
+// JSON por max_tokens, el cierre ``` nunca llega, y un regex que exige ambos
 // lados a la vez dejaría la marca de apertura pegada al JSON, rompiendo el
 // parseo con un error confuso.
 function extractJson(raw: string): string {
@@ -45,7 +45,7 @@ function extractJson(raw: string): string {
   return withoutOpenFence.replace(/\s*```\s*$/i, '').trim()
 }
 
-export async function analyzeWithMinimax(
+export async function analyzeOutfitScore(
   description: OutfitDescription,
   formParams:  FormParams,
   locale:      'es' | 'en',
@@ -54,29 +54,29 @@ export async function analyzeWithMinimax(
   let finishReason: string | undefined
 
   try {
-    const response = await minimax.chat.completions.create(
+    const response = await scoringClient.chat.completions.create(
       {
-        model:           MINIMAX_MODEL,
+        model:           SCORING_MODEL,
         temperature:     0.3,
-        // glm-5.2 (ver comentario en minimax.ts sobre por qué no es Minimax)
-        // usa su propio presupuesto de razonamiento en `reasoning_content`,
-        // separado de este límite. Medido con el prompt real: ~1260 tokens
-        // de completion en total, muy por debajo de este techo. Se deja
-        // holgado a propósito como red de seguridad contra un caso raro de
+        // glm-5.2 (ver comentario en scoringClient.ts) usa su propio
+        // presupuesto de razonamiento en `reasoning_content`, separado de
+        // este límite. Medido con el prompt real: ~1260 tokens de completion
+        // en total, muy por debajo de este techo. Se deja holgado a
+        // propósito como red de seguridad contra un caso raro de
         // razonamiento largo, no como el mecanismo de control de latencia:
         // ese es el `timeout` de abajo.
         max_tokens:      4200,
         response_format: { type: 'json_object' },
         messages: [
-          { role: 'system',  content: buildMinimaxSystemPrompt(locale) },
-          { role: 'user',    content: buildMinimaxUserPrompt(description, formParams) },
+          { role: 'system',  content: buildScoringSystemPrompt(locale) },
+          { role: 'user',    content: buildScoringUserPrompt(description, formParams) },
         ],
       },
-      // Timeout explícito por debajo del límite de Vercel: si Minimax se
-      // cuelga, preferimos fallar rápido con un error controlado (que el
-      // usuario puede reintentar) a que la función serverless completa
-      // muera de golpe a los 60s sin poder devolver una respuesta limpia.
-      // maxRetries: 0 es OBLIGATORIO acá: el SDK de openai reintenta
+      // Timeout explícito por debajo del límite de Vercel: si el modelo de
+      // scoring se cuelga, preferimos fallar rápido con un error controlado
+      // (que el usuario puede reintentar) a que la función serverless
+      // completa muera de golpe a los 60s sin poder devolver una respuesta
+      // limpia. maxRetries: 0 es OBLIGATORIO acá: el SDK de openai reintenta
       // automáticamente 2 veces por defecto, así que sin esto un timeout de
       // 45s se convierte en 3 intentos de 45s = hasta 135s reales (visto en
       // producción: un timeout "de 45s" tardó 145s en fallar).
@@ -85,32 +85,32 @@ export async function analyzeWithMinimax(
     raw = response.choices[0]?.message?.content
     finishReason = response.choices[0]?.finish_reason
   } catch (e) {
-    console.error('[minimax] API call failed:', e)
-    throw new AnalysisError('MINIMAX_FAILED', 'Minimax API call failed')
+    console.error('[scoring] API call failed:', e)
+    throw new AnalysisError('SCORING_FAILED', 'Scoring model API call failed')
   }
 
   if (!raw) {
-    throw new AnalysisError('EMPTY_RESPONSE', 'Minimax returned an empty response')
+    throw new AnalysisError('EMPTY_RESPONSE', 'Scoring model returned an empty response')
   }
 
   if (finishReason === 'length') {
-    console.error('[minimax] response was truncated by max_tokens. Raw content:', raw)
-    throw new AnalysisError('INVALID_RESPONSE', 'Minimax response was truncated before completing the JSON')
+    console.error('[scoring] response was truncated by max_tokens. Raw content:', raw)
+    throw new AnalysisError('INVALID_RESPONSE', 'Scoring model response was truncated before completing the JSON')
   }
 
   let parsed: Record<string, unknown>
   try {
     parsed = JSON.parse(extractJson(raw)) as Record<string, unknown>
   } catch (e) {
-    console.error('[minimax] returned invalid JSON. Raw content:', raw, e)
-    throw new AnalysisError('INVALID_RESPONSE', 'Minimax returned invalid JSON')
+    console.error('[scoring] returned invalid JSON. Raw content:', raw, e)
+    throw new AnalysisError('INVALID_RESPONSE', 'Scoring model returned invalid JSON')
   }
 
   // Validar y construir dimensions (cada una con score + detail personalizado)
   const rawDimensions = parsed.dimensions as Record<string, unknown> | undefined
   if (!rawDimensions || typeof rawDimensions !== 'object') {
-    console.error('[minimax] missing dimensions. Parsed response:', parsed)
-    throw new AnalysisError('INVALID_RESPONSE', 'Missing dimensions in Minimax response')
+    console.error('[scoring] missing dimensions. Parsed response:', parsed)
+    throw new AnalysisError('INVALID_RESPONSE', 'Missing dimensions in scoring response')
   }
 
   const dimensions = {} as Record<DimensionKey, DimensionResult>
@@ -119,7 +119,7 @@ export async function analyzeWithMinimax(
     const score  = rawDim ? clampInt(rawDim.score) : null
     const detail = rawDim ? readDetail(rawDim.detail) : null
     if (score === null || detail === null) {
-      console.error(`[minimax] invalid or missing dimension "${key}". Parsed response:`, parsed)
+      console.error(`[scoring] invalid or missing dimension "${key}". Parsed response:`, parsed)
       throw new AnalysisError('INVALID_RESPONSE', `Invalid or missing dimension: ${key}`)
     }
     dimensions[key] = { score, detail }
@@ -128,7 +128,7 @@ export async function analyzeWithMinimax(
   // Validar globalRatio
   const globalRatio = clampInt(parsed.globalRatio)
   if (globalRatio === null) {
-    console.error('[minimax] invalid or missing globalRatio. Parsed response:', parsed)
+    console.error('[scoring] invalid or missing globalRatio. Parsed response:', parsed)
     throw new AnalysisError('INVALID_RESPONSE', 'Invalid or missing globalRatio')
   }
 
