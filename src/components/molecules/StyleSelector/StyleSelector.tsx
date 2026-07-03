@@ -14,6 +14,7 @@ export type StyleOption =
   | 'punkRock'
   | 'gotico'
   | 'geek'
+  | 'miEstilo'
 
 const STYLES: StyleOption[] = [
   'urbano',
@@ -27,6 +28,7 @@ const STYLES: StyleOption[] = [
   'punkRock',
   'gotico',
   'geek',
+  'miEstilo',
 ]
 
 interface StyleSelectorProps {
@@ -54,7 +56,11 @@ export function StyleSelector({ t, step, value, onChange, className }: StyleSele
             key={style}
             role="radio"
             aria-checked={value === style}
-            className={['style-chip', value === style && 'style-chip--active']
+            className={[
+              'style-chip',
+              style === 'miEstilo' && 'style-chip--rainbow',
+              value === style && 'style-chip--active',
+            ]
               .filter(Boolean)
               .join(' ')}
             onClick={() => onChange(style)}

@@ -16,4 +16,5 @@ export const LOADER_EMOJIS: Record<StyleOption | 'generic', string[]> = {
   punkRock: ['🤘', '⛓️', '🎸', '💀', '🧷'],
   gotico: ['🖤', '🦇', '🕯️', '⚰️', '🌙'],
   geek: ['🤓', '🎮', '👾', '📚', '🚀'],
+  miEstilo: ['🕵️‍♀️', '🔍', '🌈', '🎨', '✨'],
 }

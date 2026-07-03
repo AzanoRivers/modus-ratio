@@ -2,6 +2,7 @@ import { CORPUS_DESCRIPTIONS } from '@/lib/styleCorpus'
 import type { RecommendationKey } from '@/lib/analysisTypes'
 import type { OutfitDescription } from '@/lib/outfitDescription'
 import type { FormParams } from '@/components/organisms/HomeForm'
+import type { StyleOption } from '@/components/molecules/StyleSelector'
 
 const STYLE_LABELS: Record<string, string> = {
   urbano:             'Urban streetwear',
@@ -46,10 +47,11 @@ function buildCorpusList(): string {
     .join('\n')
 }
 
-export function buildScoringSystemPrompt(locale: 'es' | 'en'): string {
+export function buildScoringSystemPrompt(locale: 'es' | 'en', style?: StyleOption | null): string {
   const localeInstruction = locale === 'es'
     ? 'Spanish (LATAM-neutral, informal "tú")'
     : 'English'
+  const isMyStyleMode = style === 'miEstilo'
 
   return `You are a warm, knowledgeable style friend who happens to have deep expertise in fashion theory. You receive a structured outfit description extracted by a vision model and the wearer's declared parameters. Your scores must be justifiable with a recognized styling principle (color theory, proportion, dress-code hierarchy, fit, or aesthetic-code coherence), but the way you TALK about those scores must feel like a friend who really looked at their specific outfit and cares, never like a report generated about "an outfit". You do NOT see the image: rely on the structured description.
 
@@ -94,7 +96,9 @@ The five dimensions:
 - styleCoherence: degree of internal alignment among pieces and accessories in terms of aesthetic code (streetwear, formal, alternative, old money, etc.) and material register. Does NOT penalize intentional fusion; DOES penalize accidental mixing.
 - fitAndSilhouette: how the garment cuts and lengths relate to the declared body build (slim, athletic, uniform, thick) and the declared height. Evaluates the silhouette the outfit BUILDS, not the body itself. Fit is the foundation: without it, no other rule works.
 - originality: degree of personal expression and creative signature within the declared aesthetic code. Distinguishes a generic template from a personal voice. Does NOT equate "different" with "original" and does NOT reward rarity for its own sake.
-- contextFit: match between the outfit and the target style declared by the wearer (urbano, alternativo, casual, semiformal, formal, formalUrbano, formalAlternativo, oldmoney, punkRock, gotico, geek). Each target style is equally valid; do not treat formal as inherently better than streetwear.
+- contextFit: ${isMyStyleMode
+    ? 'in this mode there is NO declared target style (see SELF-DETECTED STYLE MODE below). contextFit measures how coherently the outfit commits to the style line YOU identify as its best match, or, if no line fits coherently, how much the outfit lacks any recognizable through-line at all.'
+    : 'match between the outfit and the target style declared by the wearer (urbano, alternativo, casual, semiformal, formal, formalUrbano, formalAlternativo, oldmoney, punkRock, gotico, geek). Each target style is equally valid; do not treat formal as inherently better than streetwear.'}
 
 ## WEIGHTING FOR globalRatio
 Apply a weighted sum using the table below, where the rows are the declared target style and the columns are the dimensions in the order colorHarmony, styleCoherence, fitAndSilhouette, originality, contextFit. Round to integer.
@@ -112,15 +116,25 @@ Apply a weighted sum using the table below, where the rows are the declared targ
 | punkRock          | 15 | 25 | 15 | 25 | 20 |
 | gotico            | 20 | 30 | 15 | 15 | 20 |
 | geek              | 10 | 20 | 15 | 25 | 30 |
+| miEstilo          | 30 | 30 | 20 |  5 | 15 |
 
 Formula: \`globalRatio = round(colorHarmony*w1 + styleCoherence*w2 + fitAndSilhouette*w3 + originality*w4 + contextFit*w5)\`. The weights are percentages and sum to 100. Using this explicit table (not a free judgment) keeps the score consistent across similar outfits.
+${isMyStyleMode ? '\nUse the `miEstilo` row above: this mode intentionally weighs colorHarmony and styleCoherence the heaviest (the wearer wants to know if the outfit is well put-together and color-balanced, not how original it is or how well it matches a target they never declared).' : ''}
 
 ## SEVERE CONTEXT MISMATCH OVERRIDE (read this, it is not covered by the formula above)
 Distinguish a "generic but plausible" outfit for the target style (an ordinary low contextFit score handles this) from a genuinely WRONG aesthetic: the actual garments belong to a completely different, unrelated code than the one declared. Examples: technical/hiking outdoor gear declared as punkRock or gotico, business formal declared as urbano streetwear, athleisure declared as oldmoney. This is not "not exceptional", it is the wrong outfit for this evaluation.
 - contextFit must land in 0-15, never higher, and the occasion_mismatch warning must be present.
 - The weighted formula alone is NOT enough here: good fit or coherent color in the WRONG code can average out to a deceptively "acceptable" 35-50 globalRatio, which misrepresents how wrong the match is. When you detect a severe mismatch, globalRatio must not exceed 30 — if your weighted computation lands higher, override it down to 30 or below.
 - This override does NOT apply to outfits that simply lean toward a related or adjacent code (e.g. streetwear-adjacent punk, minimalist gothic, smart-casual old money): only to outfits whose actual aesthetic has essentially nothing to do with the declared target.
-
+${isMyStyleMode ? `
+## SELF-DETECTED STYLE MODE (this request has NO declared target style)
+The wearer did not pick a target style: they want to know what their outfit reads as, and whether it holds together. You must:
+1. Identify which ONE of these known lines the outfit most closely matches: urbano, alternativo, casual, semiformal, formal, formalUrbano, formalAlternativo, oldmoney, punkRock, gotico, geek. Report it in a top-level \`"detectedStyle"\` field (exactly one of those keys).
+2. If the outfit does not coherently belong to any of them — including as a deliberate, internally-consistent eclectic or alternative mix, which DOES count as a valid line if the pieces actually work together on purpose — set \`"detectedStyle": "none"\` instead. Reserve "none" for outfits that read as genuinely accidental or contradictory (pieces from unrelated codes with no unifying color, silhouette, or intent), not merely "unusual".
+3. Score contextFit against whichever of the two cases applies: if you detected a real line, score how deliberately and completely the outfit commits to THAT line's own codes (same calibration bands as any other dimension). If \`detectedStyle\` is "none", contextFit must land low (0-25): this is not a punishment, it is an honest measurement that nothing ties the outfit together.
+4. Do NOT apply the SEVERE CONTEXT MISMATCH OVERRIDE above in this mode (there is no declared target to mismatch against); use the contextFit scoring in point 3 instead, which already captures the same idea.
+5. Write about the detected line naturally in the dimension "detail" texts (e.g. mention that the outfit reads as casual, or that it does not commit to one clear line) — do not just state the raw key.
+` : ''}
 ## STYLE PRINCIPLES CORPUS (recommendation keys)
 The 20 keys below are the ONLY allowed recommendation keys. Each key has a short operational definition and an actionable example. When recommending a key, your recommendation must follow the example pattern, adapted to the specific outfit.
 
@@ -190,7 +204,29 @@ Weights: 15/25/15/25/20 -> raw weighted = 55*0.15 + 60*0.25 + 58*0.15 + 25*0.25 
 Override applied (SEVERE CONTEXT MISMATCH OVERRIDE): raw weighted 39.8 would read as "acceptable", which misrepresents a genuinely wrong-code outfit. globalRatio capped at 22.
 Highlight: null. Warnings: [occasion_mismatch]. Recommendations: [aesthetic_code_purity, accessory_reinforcement].
 </example>
+${isMyStyleMode ? `
+<example>
+Mode: SELF-DETECTED STYLE (no declared target).
+Outfit: black turtleneck, black leather jacket, black skinny jeans, black chelsea boots, silver chain necklace.
+Declared: skin=fair, build=slim, height=180, confidence=high.
+Reasoning: fully monochrome black palette with a single silver accent, slim consistent silhouette throughout. This reads clearly as alternativo (dark, minimal, leather-forward) even though the wearer never declared a target. Nothing about it is accidental: every piece reinforces the same code.
+detectedStyle: alternativo.
+Scores: colorHarmony 70, styleCoherence 84, fitAndSilhouette 75, originality 45, contextFit 82.
+Weights: 30/30/20/5/15 -> globalRatio = 70*0.30 + 84*0.30 + 75*0.20 + 45*0.05 + 82*0.15 = 21.0 + 25.2 + 15.0 + 2.25 + 12.3 = 75.75 -> round 76.
+Highlight: cohesive_look. Warnings: []. Recommendations: [monochromatic_depth, accessory_reinforcement].
+</example>
 
+<example>
+Mode: SELF-DETECTED STYLE (no declared target).
+Outfit: neon-orange technical running jacket, plaid wool trousers, formal black oxford shoes, straw sun hat.
+Declared: skin=medium, build=athletic, height=172, confidence=medium.
+Reasoning: four pieces from four unrelated codes (athletic technical wear, business formal trousers, formal shoes, resort headwear) with no shared color story, no shared formality level, and nothing suggesting intentional clash-as-statement. This does not read as any recognizable line, not even as deliberate eclectic mixing.
+detectedStyle: none.
+Scores: colorHarmony 30, styleCoherence 22, fitAndSilhouette 50, originality 35, contextFit 12.
+Weights: 30/30/20/5/15 -> globalRatio = 30*0.30 + 22*0.30 + 50*0.20 + 35*0.05 + 12*0.15 = 9.0 + 6.6 + 10.0 + 1.75 + 1.8 = 29.15 -> round 29.
+Highlight: null. Warnings: [colors_clash, occasion_mismatch]. Recommendations: [aesthetic_code_purity, three_color_rule].
+</example>
+` : ''}
 ## RESPONSE FORMAT
 Respond ONLY with a valid JSON object. No explanation, no markdown, no preamble, no trailing text (this means: do not think out loud outside the JSON, do not wrap it in a <think> block, do not add commentary before or after). Use exactly this shape:
 
@@ -209,10 +245,11 @@ Respond ONLY with a valid JSON object. No explanation, no markdown, no preamble,
   "highlight": { "key": "<one of the highlight list>", "detail": "<personalized sentence>" } | null,
   "recommendations": [
     { "key": "<one of the corpus keys>", "detail": "<personalized sentence, expands the corpus principle with something specific from this outfit>" }
-  ]
+  ]${isMyStyleMode ? `,
+  "detectedStyle": "<one of urbano, alternativo, casual, semiformal, formal, formalUrbano, formalAlternativo, oldmoney, punkRock, gotico, geek, or \\"none\\" — see SELF-DETECTED STYLE MODE>"` : ''}
 }
 
-"warnings" has 0-3 items (severity order), "recommendations" has 0-5 items (priority order). Every "detail" follows the WRITING rules above: specific, warm, references something real from the description, never generic.`
+"warnings" has 0-3 items (severity order), "recommendations" has 0-5 items (priority order). Every "detail" follows the WRITING rules above: specific, warm, references something real from the description, never generic.${isMyStyleMode ? ' "detectedStyle" is REQUIRED in this response (this request has no declared target style).' : ''}`
 }
 
 export function buildScoringUserPrompt(
@@ -226,7 +263,9 @@ export function buildScoringUserPrompt(
   lines.push('')
   lines.push('## WEARER PARAMETERS')
 
-  if (formParams.style) {
+  if (formParams.style === 'miEstilo') {
+    lines.push('Target style: none declared — this is SELF-DETECTED STYLE MODE. Identify the best-fitting line yourself (or "none") and report it in "detectedStyle", per your system instructions.')
+  } else if (formParams.style) {
     lines.push(`Target style: ${STYLE_LABELS[formParams.style] ?? formParams.style}`)
   }
 

@@ -68,7 +68,7 @@ export async function analyzeOutfitScore(
         max_tokens:      4200,
         response_format: { type: 'json_object' },
         messages: [
-          { role: 'system',  content: buildScoringSystemPrompt(locale) },
+          { role: 'system',  content: buildScoringSystemPrompt(locale, formParams.style) },
           { role: 'user',    content: buildScoringUserPrompt(description, formParams) },
         ],
       },
@@ -150,6 +150,20 @@ export async function analyzeOutfitScore(
     .filter((item): item is KeyedDetail<typeof RECOMMENDATION_KEYS[number]> => item !== null)
     .slice(0, 5)
 
+  // "detectedStyle" solo aplica al modo "Mi Estilo" (sin target declarado).
+  // Se valida de forma defensiva, igual que warnings/highlight/recommendations
+  // arriba: si el modelo lo omite o devuelve algo fuera de la lista cerrada,
+  // se descarta en silencio en vez de tumbar todo el análisis.
+  let detectedStyle: AnalysisResults['detectedStyle']
+  if (formParams.style === 'miEstilo') {
+    const raw = parsed.detectedStyle
+    if (typeof raw === 'string' && (STYLE_KEYS as readonly string[]).includes(raw)) {
+      detectedStyle = raw as AnalysisResults['detectedStyle']
+    } else {
+      console.error('[scoring] invalid or missing detectedStyle in miEstilo mode. Parsed response:', parsed)
+    }
+  }
+
   return {
     dimensions,
     globalRatio,
@@ -157,8 +171,19 @@ export async function analyzeOutfitScore(
     warnings,
     highlight,
     recommendations,
+    ...(detectedStyle !== undefined && { detectedStyle }),
   }
 }
+
+// Lista cerrada para validar "detectedStyle": las 11 líneas reales más
+// "none" (el propio "miEstilo" no es un valor válido de detección: sería
+// circular). Duplica STYLE_LABELS de scoringAgent.ts a propósito, mismo
+// criterio que ya usa ese archivo (no hay una fuente única compartida).
+const STYLE_KEYS = [
+  'urbano', 'alternativo', 'casual', 'semiformal', 'formal',
+  'formalUrbano', 'formalAlternativo', 'oldmoney', 'punkRock', 'gotico', 'geek',
+  'none',
+] as const
 
 // Valida un item { key, detail } contra una lista cerrada de keys permitidas.
 // Retorna null si el key no pertenece a la lista o si falta un detail válido:

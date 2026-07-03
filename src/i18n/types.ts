@@ -41,6 +41,7 @@ export interface Translations {
       punkRock: string
       gotico: string
       geek: string
+      miEstilo: string
     }
     heightLabel: string
     heightUnit: string
@@ -89,11 +90,13 @@ export interface Translations {
     analyzing:  string
     messages: {
       generic: string[]
-      byStyle: Record<'urbano' | 'alternativo' | 'casual' | 'semiformal' | 'formal' | 'formalUrbano' | 'formalAlternativo' | 'oldmoney' | 'punkRock' | 'gotico' | 'geek', string[]>
+      byStyle: Record<'urbano' | 'alternativo' | 'casual' | 'semiformal' | 'formal' | 'formalUrbano' | 'formalAlternativo' | 'oldmoney' | 'punkRock' | 'gotico' | 'geek' | 'miEstilo', string[]>
     }
   }
   results: {
     ratioForStyleLabel: string
+    detectedStyleLabel: string
+    noStyleDetected:  string
     dimensionsTitle:  string
     warningsTitle:    string
     highlightTitle:   string

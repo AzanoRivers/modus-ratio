@@ -29,8 +29,12 @@ export function ResultsPanel({ t, onReanalyze }: ResultsPanelProps) {
     return <ResultsPanelSkeleton />
   }
 
-  const { dimensions, globalRatio, semaphore, warnings, highlight, recommendations } = results
-  const styleLabel = formParams.style ? t.form.styles[formParams.style] : ''
+  const { dimensions, globalRatio, semaphore, warnings, highlight, recommendations, detectedStyle } = results
+  const isMyStyleMode = formParams.style === 'miEstilo'
+  const styleLabel = formParams.style && !isMyStyleMode ? t.form.styles[formParams.style] : ''
+  const ratioLabel = isMyStyleMode
+    ? `${t.results.detectedStyleLabel} ${detectedStyle && detectedStyle !== 'none' ? t.form.styles[detectedStyle] : t.results.noStyleDetected}`
+    : `${t.results.ratioForStyleLabel}${styleLabel && ` ${styleLabel}`}`
 
   return (
     <div className="results-panel">
@@ -41,7 +45,7 @@ export function ResultsPanel({ t, onReanalyze }: ResultsPanelProps) {
           {SEMAPHORE_SYMBOL[semaphore]}
         </div>
         <span className="results-panel__ratio-label">
-          {t.results.ratioForStyleLabel}{styleLabel && ` ${styleLabel}`}
+          {ratioLabel}
         </span>
         <span className="results-panel__ratio-value">{globalRatio}</span>
         <span className="results-panel__semaphore-text">{t.analysis.semaphore[semaphore]}</span>

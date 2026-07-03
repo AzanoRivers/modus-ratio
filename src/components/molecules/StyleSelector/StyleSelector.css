@@ -70,3 +70,77 @@
 @media (prefers-reduced-motion: reduce) {
   .style-chip { transition: none; }
 }
+
+/* ── "Mi Estilo": borde y texto arcoíris ──────────────────────────
+   Mismo degradado y keyframe (0%→200% background-position) que
+   .home__subtitle-rainbow (src/styles/home.css), replicado acá para no
+   depender de que esa hoja esté cargada. El borde usa la misma técnica
+   de máscara que .btn-beam (src/styles/globals.css): inset + padding +
+   mask-composite: exclude sobre un ::after, pero con un gradiente lineal
+   deslizante en vez de un cónico rotando. */
+@keyframes styleChipRainbow {
+  0%   { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+
+.style-chip--rainbow {
+  position: relative;
+  background-image: linear-gradient(
+    90deg,
+    #6366f1, #22d3ee, #a855f7, #22c55e, #eab308, #f97316, #ec4899, #6366f1
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: styleChipRainbow 8s linear infinite;
+  filter: drop-shadow(0 0 3px rgba(168, 85, 247, 0.35));
+}
+
+.style-chip--rainbow::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: calc(0.25rem + 1px);
+  padding: 1px;
+  background: linear-gradient(
+    90deg,
+    #6366f1, #22d3ee, #a855f7, #22c55e, #eab308, #f97316, #ec4899, #6366f1
+  );
+  background-size: 200% auto;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  animation: styleChipRainbow 8s linear infinite;
+}
+
+/* Compound selector: mayor especificidad que .style-chip--active sola,
+   asegura que el texto siga transparente/degradado aunque el chip esté
+   seleccionado (en vez de que --active lo pise con su color sólido).
+   Como el borde ya es arcoíris sin seleccionar, "seleccionado" no puede
+   distinguirse con un cambio de color de borde como en los demás chips:
+   se refuerza con más brillo (glow doble) y un borde más grueso, más un
+   tinte de fondo cálido tomado de la propia paleta (violeta/rosa) en vez
+   del azul genérico de los demás chips activos. */
+.style-chip--rainbow.style-chip--active {
+  color: transparent;
+  background-color: rgba(168, 85, 247, 0.14);
+  filter:
+    drop-shadow(0 0 4px rgba(168, 85, 247, 0.55))
+    drop-shadow(0 0 10px rgba(236, 72, 153, 0.55));
+}
+
+.style-chip--rainbow.style-chip--active::after {
+  padding: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .style-chip--rainbow,
+  .style-chip--rainbow::after {
+    animation: none;
+    background-position: 0% center;
+  }
+}

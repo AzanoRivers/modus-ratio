@@ -1,4 +1,5 @@
 import { RATIO_GREEN_MIN, RATIO_YELLOW_MIN } from '@/lib/constants'
+import type { StyleOption } from '@/components/molecules/StyleSelector'
 
 export const DIMENSION_KEYS = [
   'colorHarmony',
@@ -72,6 +73,10 @@ export interface AnalysisResults {
   warnings:        KeyedDetail<WarningKey>[]
   highlight:       KeyedDetail<HighlightKey> | null
   recommendations: KeyedDetail<RecommendationKey>[]
+  // Solo presente en modo "Mi Estilo" (formParams.style === 'miEstilo'): la
+  // línea que el modelo de scoring dedujo del outfit, o 'none' si no encaja
+  // de forma coherente con ninguna. Ausente en el resto de los modos.
+  detectedStyle?:  StyleOption | 'none'
 }
 
 export type AnalysisErrorCode =
