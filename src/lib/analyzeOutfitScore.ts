@@ -8,9 +8,17 @@ import {
 } from '@/lib/analysisTypes'
 import type { AnalysisResults, DimensionKey, DimensionResult, KeyedDetail } from '@/lib/analysisTypes'
 import { scoringClient, SCORING_MODEL } from '@/lib/scoringClient'
+import { openai } from '@/lib/openai'
 import { buildScoringSystemPrompt, buildScoringUserPrompt } from '@/lib/prompts/scoringAgent'
 import type { OutfitDescription } from '@/lib/outfitDescription'
 import type { FormParams } from '@/components/organisms/HomeForm'
+
+// Fallback cuando el modelo de scoring chino (glm-5.2, ver scoringClient.ts)
+// no responde: mismo modelo barato que ya se usa para la extracción de
+// descripción desde la imagen en extractOutfitDescription.ts. Este paso es
+// texto puro (no recibe la imagen, solo el OutfitDescription ya extraído),
+// así que gpt-4o-mini puede resolverlo con el mismo prompt sin cambios.
+const FALLBACK_SCORING_MODEL = 'gpt-4o-mini'
 
 // ~25 palabras en una sola oración (pedido en el prompt) rara vez pasa de
 // 220 caracteres. Sirve de red de seguridad si el modelo se extiende de más.
@@ -53,6 +61,14 @@ export async function analyzeOutfitScore(
   let raw: string | null | undefined
   let finishReason: string | undefined
 
+  // Mismo par system/user para ambos intentos: el fallback no es un modelo
+  // distinto con un prompt distinto, es el mismo prompt de scoring resuelto
+  // por otro modelo cuando el chino no responde.
+  const messages = [
+    { role: 'system' as const, content: buildScoringSystemPrompt(locale, formParams.style) },
+    { role: 'user'   as const, content: buildScoringUserPrompt(description, formParams) },
+  ]
+
   try {
     const response = await scoringClient.chat.completions.create(
       {
@@ -67,10 +83,7 @@ export async function analyzeOutfitScore(
         // ese es el `timeout` de abajo.
         max_tokens:      4200,
         response_format: { type: 'json_object' },
-        messages: [
-          { role: 'system',  content: buildScoringSystemPrompt(locale, formParams.style) },
-          { role: 'user',    content: buildScoringUserPrompt(description, formParams) },
-        ],
+        messages,
       },
       // Timeout explícito por debajo del límite de Vercel: si el modelo de
       // scoring se cuelga, preferimos fallar rápido con un error controlado
@@ -84,9 +97,27 @@ export async function analyzeOutfitScore(
     )
     raw = response.choices[0]?.message?.content
     finishReason = response.choices[0]?.finish_reason
-  } catch (e) {
-    console.error('[scoring] API call failed:', e)
-    throw new AnalysisError('SCORING_FAILED', 'Scoring model API call failed')
+  } catch (primaryError) {
+    console.error('[scoring] primary model (glm-5.2) API call failed, falling back to gpt-4o-mini:', primaryError)
+
+    try {
+      const fallbackResponse = await openai.chat.completions.create(
+        {
+          model:           FALLBACK_SCORING_MODEL,
+          temperature:     0.3,
+          max_tokens:      4200,
+          response_format: { type: 'json_object' },
+          messages,
+        },
+        // Mismos motivos que arriba: fallar rápido y sin reintentos duplicados.
+        { timeout: 40_000, maxRetries: 0 },
+      )
+      raw = fallbackResponse.choices[0]?.message?.content
+      finishReason = fallbackResponse.choices[0]?.finish_reason
+    } catch (fallbackError) {
+      console.error('[scoring] fallback model (gpt-4o-mini) API call also failed:', fallbackError)
+      throw new AnalysisError('SCORING_FAILED', 'Scoring model API call failed (primary and fallback)')
+    }
   }
 
   if (!raw) {
