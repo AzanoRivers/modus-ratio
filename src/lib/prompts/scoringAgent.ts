@@ -148,12 +148,13 @@ colors_clash, pattern_overload, ill_fitted, occasion_mismatch, accessories_missi
 Highlight (choose exactly 1 that best applies, or null if none stands out):
 great_color_combo, statement_piece, well_fitted, cohesive_look, unique_style
 
-Recommendations (choose 0-5 keys from the corpus above, ordered by priority, most impactful first):
+Recommendations (choose 0-5 keys from the corpus above, ordered by priority, most impactful first). These corpus keys are the ONLY valid values, reproduce one exactly, character for character, do not paraphrase or shorten it:
 ${(Object.keys(CORPUS_DESCRIPTIONS) as RecommendationKey[]).join(', ')}
+None of "colorHarmony", "styleCoherence", "fitAndSilhouette", "originality", "contextFit" is in that list: those are dimension names, not recommendation keys, and are INVALID here even though they appear elsewhere in this prompt.
 
 ## PRIORITY RULES FOR RECOMMENDATIONS
 1. If a warning is present, pick the corpus key that most directly fixes it first (e.g. warning ill_fitted -> fitted_relaxed_balance or waist_definition).
-2. Then target the lowest-scoring dimension with a key that improves it (e.g. low colorHarmony -> a color key).
+2. Then target the lowest-scoring dimension with a corpus key that improves it (e.g. low colorHarmony -> a color key from the corpus, such as skin_tone_palette or three_color_rule). The dimension name itself (colorHarmony, styleCoherence, fitAndSilhouette, originality, contextFit) is NEVER a valid recommendation key: it only tells you WHICH corpus key to look for, never what to output.
 3. Do NOT recommend two keys that contradict each other (e.g. color_complementary AND color_analogous; aesthetic_code_purity AND intentional_contrast).
 4. Do NOT recommend more than one key per category (color / proportion / pattern-texture / coherence / silhouette).
 5. Do NOT include filler or generic recommendations.
@@ -244,7 +245,7 @@ Respond ONLY with a valid JSON object. No explanation, no markdown, no preamble,
   ],
   "highlight": { "key": "<one of the highlight list>", "detail": "<personalized sentence>" } | null,
   "recommendations": [
-    { "key": "<one of the corpus keys>", "detail": "<personalized sentence, expands the corpus principle with something specific from this outfit>" }
+    { "key": "<one of the corpus keys listed under CLOSED LISTS above, never a dimension name>", "detail": "<personalized sentence, expands the corpus principle with something specific from this outfit>" }
   ]${isMyStyleMode ? `,
   "detectedStyle": "<one of urbano, alternativo, casual, semiformal, formal, formalUrbano, formalAlternativo, oldmoney, punkRock, gotico, geek, or \\"none\\" — see SELF-DETECTED STYLE MODE>"` : ''}
 }

@@ -16,7 +16,7 @@ export const es: Translations = {
       'Modus Ratio es un Asesor de Imagen. Puntea tu Outfit según el estilo que quieres reflejar y te regala un par de Tips para lograrlo.',
     analyzeButton: 'Analizar outfit',
     usageLimitTitle:    'Límite de análisis alcanzado',
-    usageLimitBody:     'Has usado los 25 análisis de esta hora.',
+    usageLimitBody:     'Has alcanzado el límite de análisis por ahora.',
     usageLimitResetsAt: 'Disponible de nuevo en:',
     usageLimitMinutes:  'minutos',
     imageBlockTitle: 'Demasiadas imágenes no válidas',

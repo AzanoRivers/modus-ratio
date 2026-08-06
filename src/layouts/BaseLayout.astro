@@ -1,5 +1,5 @@
 ---
-import { AzanoLabsLogo, CreatedBySignature, GithubLink } from '@/components/atoms'
+import { AzanoLabsLogo, CreatedBySignature, GithubLink, Toaster } from '@/components/atoms'
 import { OtherProjectsPanel, type OtherProjectItem } from '@/components/organisms'
 import { getDictionary } from '@/i18n'
 import { getLocale } from '@/utils/getLocale'
@@ -147,6 +147,7 @@ const labProjects: OtherProjectItem[] = [
       labProjects={labProjects}
       client:load
     />
+    <Toaster client:load />
   </body>
   <script>
     import { setupGlobalAudio, preloadSounds } from '@/utils/audio'

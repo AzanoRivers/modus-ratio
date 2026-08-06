@@ -23,15 +23,13 @@ export type { FormParams, StyleOption, SkinColor, BuildValue, GenderPref }
 interface HomeFormProps {
   t:        Translations
   onSubmit: () => void
-  disabled: boolean
 }
 
-export function HomeForm({ t, onSubmit, disabled }: HomeFormProps) {
+export function HomeForm({ t, onSubmit }: HomeFormProps) {
   const formParams    = useAppStore(state => state.formParams)
   const setFormParam  = useAppStore(state => state.setFormParam)
   const currentFile   = useAppStore(state => state.currentFile)
   const setCurrentFile = useAppStore(state => state.setCurrentFile)
-  const canAnalyze    = useAppStore(state => state.canAnalyze)
 
   const [captchaValid, setCaptcha] = useState(false)
 
@@ -80,7 +78,7 @@ export function HomeForm({ t, onSubmit, disabled }: HomeFormProps) {
         <Button
           variant="primary"
           type="button"
-          disabled={disabled || !currentFile || !formParams.style || !captchaValid || !canAnalyze()}
+          disabled={!currentFile || !formParams.style || !captchaValid}
           onClick={onSubmit}
           className="home-form__submit btn-beam"
         >

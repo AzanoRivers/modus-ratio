@@ -41,11 +41,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   if (!usage.allowed) {
     if (usage.shouldBan) await banIP(ip)
-    return err('USAGE_LIMIT_EXCEEDED', 'Hourly limit reached', 429)
+    return err('USAGE_LIMIT_EXCEEDED', 'Usage limit reached', 429)
   }
 
   // Bloqueo por abuso de imágenes rechazadas: se revisa antes de gastar
-  // tokens de IA. Independiente del límite de 25/hora y del ban de seguridad.
+  // tokens de IA. Independiente del límite de uso y del ban de seguridad.
   const rejectionBlock = await isRejectionBlocked(ip)
   if (rejectionBlock.blocked) {
     return err(

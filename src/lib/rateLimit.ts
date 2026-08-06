@@ -1,8 +1,11 @@
 import { redis } from '@/lib/redis'
+import { env } from '@/lib/env'
 
-const USAGE_LIMIT      = 25
-const USAGE_WINDOW_MS  = 60 * 60 * 1000
-const USAGE_WINDOW_SEC = 60 * 60
+// Configurables por env (RATE_LIMIT_USAGE_LIMIT / RATE_LIMIT_USAGE_WINDOW_MINUTES),
+// default 5 análisis cada 15 min si no se setean.
+const USAGE_LIMIT      = env.rateLimit.usageLimit
+const USAGE_WINDOW_MS  = env.rateLimit.usageWindowMinutes * 60 * 1000
+const USAGE_WINDOW_SEC = env.rateLimit.usageWindowMinutes * 60
 const BAN_TTL_SEC      = 60 * 60 * 24
 const BAN_MULTIPLIER   = 3
 
@@ -10,7 +13,7 @@ const USAGE_KEY = (ip: string) => `modusratio:usage:${ip}`
 const BAN_KEY   = (ip: string) => `modusratio:ip:${ip}:banned`
 
 // Bloqueo por abuso de imágenes rechazadas (fotos de perros, objetos, etc.
-// enviadas a propósito). Independiente del límite de 25/hora y del ban de
+// enviadas a propósito). Independiente del límite de uso y del ban de
 // seguridad: 3 rechazos en 10 minutos bloquean 15 minutos.
 const REJECTION_KEY       = (ip: string) => `modusratio:rejections:${ip}`
 const REJECT_BLOCK_KEY    = (ip: string) => `modusratio:ip:${ip}:reject-blocked`
@@ -40,7 +43,10 @@ export async function checkUsage(ip: string): Promise<UsageStatus> {
 
     await redis.zremrangebyscore(key, '-inf', windowStart)
 
-    const oldest = await redis.zrange(key, 0, 0, 'WITHSCORES')
+    // ioredis 6: el overload de zrange con WITHSCORES tipa `stop` como
+    // string|Buffer (antes también aceptaba number). Comportamiento idéntico,
+    // solo cambió el tipado.
+    const oldest = await redis.zrange(key, 0, '0', 'WITHSCORES')
     const count  = await redis.zcard(key)
 
     const resetAt = oldest.length >= 2

@@ -6,10 +6,14 @@ import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   output: 'server',
-  // maxDuration explícito: el pipeline de análisis (GPT-4o-mini + Minimax M3)
-  // puede tardar decenas de segundos, y sin esto Vercel podría aplicar un
-  // límite por defecto más bajo que el máximo real permitido por el plan.
-  adapter: vercel({ maxDuration: 60 }),
+  // maxDuration explícito: el pipeline de análisis tiene 2 pasos (extracción
+  // de imagen + scoring de contexto), cada uno con su propio modelo de
+  // fallback (ver src/lib/env.ts), así que en el peor caso hay hasta 4
+  // llamadas a IA en serie dentro de una misma request. Presupuesto de
+  // timeouts: 15s + 15s + 40s + 15s = 85s (ver los timeouts en
+  // extractOutfitDescription.ts y analyzeOutfitScore.ts); 100s deja margen
+  // sin acercarse al máximo de 300s del plan Hobby/Pro con Fluid Compute.
+  adapter: vercel({ maxDuration: 100 }),
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],

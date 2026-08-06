@@ -9,7 +9,8 @@ import { CyberTransition }   from '@/components/atoms'
 import { AnalysisLoader } from '@/components/organisms/AnalysisLoader'
 import { ResultsPanel }   from '@/components/organisms/ResultsPanel'
 import { HomeForm }       from '@/components/organisms/HomeForm'
-import { UsageLimitMessage, ProcessingError } from '@/components/molecules'
+import { ProcessingError } from '@/components/molecules'
+import { toast }          from '@/lib/toast'
 import type { Translations } from '@/i18n'
 
 interface FlowControllerProps {
@@ -63,6 +64,13 @@ function scrollToPrivacyNoticeThen(callback: () => void) {
   const fallback = window.setTimeout(finish, 900)
 }
 
+// Redondea hacia arriba y nunca muestra "0 minutos": si faltan pocos
+// segundos igual se comunica como "1 minuto" en vez de un número confuso.
+function calcMinutesLeft(resetAtMs: number | null): number {
+  if (!resetAtMs) return 0
+  return Math.max(1, Math.ceil((resetAtMs - Date.now()) / 60_000))
+}
+
 export function FlowController({ t }: FlowControllerProps) {
   const phase                 = useAppStore((s) => s.phase)
   const canAnalyze            = useAppStore((s) => s.canAnalyze)
@@ -98,7 +106,24 @@ export function FlowController({ t }: FlowControllerProps) {
 
   const handleSubmit = () => {
     const file = useAppStore.getState().currentFile
-    if (!file || !canAnalyze()) return
+    if (!file) return
+
+    if (isRejectionBlocked) {
+      const minutes = calcMinutesLeft(rejectionBlockedUntil)
+      toast.warning(t.home.imageBlockTitle, {
+        description: `${t.home.imageBlockBody} ${t.home.usageLimitResetsAt} ${minutes} ${t.home.usageLimitMinutes}`,
+      })
+      return
+    }
+
+    if (!canAnalyze()) {
+      const minutes = calcMinutesLeft(resetAt())
+      toast.warning(t.home.usageLimitTitle, {
+        description: `${t.home.usageLimitBody} ${t.home.usageLimitResetsAt} ${minutes} ${t.home.usageLimitMinutes}`,
+      })
+      return
+    }
+
     scrollToPrivacyNoticeThen(() => startFlow(file))
   }
 
@@ -121,29 +146,7 @@ export function FlowController({ t }: FlowControllerProps) {
 
         {displayKey === 'idle' && (
           <div className="flow-controller__idle">
-            {isRejectionBlocked && (
-              <UsageLimitMessage
-                title={t.home.imageBlockTitle}
-                body={t.home.imageBlockBody}
-                resetsAtLabel={t.home.usageLimitResetsAt}
-                minutesLabel={t.home.usageLimitMinutes}
-                resetAt={rejectionBlockedUntil}
-              />
-            )}
-            {!isRejectionBlocked && !canAnalyze() && (
-              <UsageLimitMessage
-                title={t.home.usageLimitTitle}
-                body={t.home.usageLimitBody}
-                resetsAtLabel={t.home.usageLimitResetsAt}
-                minutesLabel={t.home.usageLimitMinutes}
-                resetAt={resetAt()}
-              />
-            )}
-            <HomeForm
-              t={t}
-              onSubmit={handleSubmit}
-              disabled={!canAnalyze() || isRejectionBlocked}
-            />
+            <HomeForm t={t} onSubmit={handleSubmit} />
           </div>
         )}
 

@@ -9,16 +9,24 @@ import {
 import type { AnalysisResults, DimensionKey, DimensionResult, KeyedDetail } from '@/lib/analysisTypes'
 import { scoringClient, SCORING_MODEL } from '@/lib/scoringClient'
 import { openai } from '@/lib/openai'
+import { env } from '@/lib/env'
 import { buildScoringSystemPrompt, buildScoringUserPrompt } from '@/lib/prompts/scoringAgent'
 import type { OutfitDescription } from '@/lib/outfitDescription'
 import type { FormParams } from '@/components/organisms/HomeForm'
 
-// Fallback cuando el modelo de scoring chino (glm-5.2, ver scoringClient.ts)
-// no responde: mismo modelo barato que ya se usa para la extracción de
-// descripción desde la imagen en extractOutfitDescription.ts. Este paso es
-// texto puro (no recibe la imagen, solo el OutfitDescription ya extraído),
-// así que gpt-4o-mini puede resolverlo con el mismo prompt sin cambios.
-const FALLBACK_SCORING_MODEL = 'gpt-4o-mini'
+// console.error(msg, error) imprime el objeto Error completo (stack, headers,
+// etc.), que es ruido cuando el error ya está manejado (ej. fallback exitoso
+// a otro modelo): esto deja solo el mensaje, en una línea.
+function describeError(e: unknown): string {
+  return e instanceof Error ? e.message : String(e)
+}
+
+// Fallback cuando el modelo de contexto (CONTEXT_ANALYSIS_MODEL, ver
+// scoringClient.ts) no responde, configurable vía CONTEXT_ANALYSIS_FALLBACK_MODEL
+// (default gpt-4o-mini, ver env.ts). Este paso es texto puro (no recibe la
+// imagen, solo el OutfitDescription ya extraído), así que un modelo de OpenAI
+// puede resolverlo con el mismo prompt sin cambios.
+const FALLBACK_SCORING_MODEL = env.models.contextAnalysisFallback
 
 // ~25 palabras en una sola oración (pedido en el prompt) rara vez pasa de
 // 220 caracteres. Sirve de red de seguridad si el modelo se extiende de más.
@@ -87,18 +95,22 @@ export async function analyzeOutfitScore(
       },
       // Timeout explícito por debajo del límite de Vercel: si el modelo de
       // scoring se cuelga, preferimos fallar rápido con un error controlado
-      // (que el usuario puede reintentar) a que la función serverless
-      // completa muera de golpe a los 60s sin poder devolver una respuesta
-      // limpia. maxRetries: 0 es OBLIGATORIO acá: el SDK de openai reintenta
-      // automáticamente 2 veces por defecto, así que sin esto un timeout de
-      // 45s se convierte en 3 intentos de 45s = hasta 135s reales (visto en
-      // producción: un timeout "de 45s" tardó 145s en fallar).
+      // (que el usuario puede reintentar, o que dispare el fallback de abajo)
+      // a que la función serverless completa muera de golpe sin poder
+      // devolver una respuesta limpia. maxRetries: 0 es OBLIGATORIO acá: el
+      // SDK de openai reintenta automáticamente 2 veces por defecto, así que
+      // sin esto un timeout de 45s se convierte en 3 intentos de 45s = hasta
+      // 135s reales (visto en producción: un timeout "de 45s" tardó 145s en
+      // fallar). Presupuesto total (ver astro.config.mjs maxDuration + los
+      // otros 3 timeouts de este pipeline): 15s (extracción) + 15s (fallback
+      // extracción) + 40s (este) + 15s (fallback de scoring) = 85s, contra
+      // un maxDuration de 100s.
       { timeout: 40_000, maxRetries: 0 },
     )
     raw = response.choices[0]?.message?.content
     finishReason = response.choices[0]?.finish_reason
   } catch (primaryError) {
-    console.error('[scoring] primary model (glm-5.2) API call failed, falling back to gpt-4o-mini:', primaryError)
+    console.error(`[scoring] primary model (${SCORING_MODEL}) failed (${describeError(primaryError)}), falling back to ${FALLBACK_SCORING_MODEL}`)
 
     try {
       const fallbackResponse = await openai.chat.completions.create(
@@ -109,13 +121,17 @@ export async function analyzeOutfitScore(
           response_format: { type: 'json_object' },
           messages,
         },
-        // Mismos motivos que arriba: fallar rápido y sin reintentos duplicados.
-        { timeout: 40_000, maxRetries: 0 },
+        // 15s, no 40s: con el fallback de extracción (extractOutfitDescription.ts)
+        // ahora hay hasta 4 llamadas secuenciales posibles bajo el mismo
+        // maxDuration de Vercel (ver astro.config.mjs). El presupuesto total
+        // asume que el fallback (un modelo de OpenAI resolviendo texto plano,
+        // sin razonamiento largo) es más rápido que el primario.
+        { timeout: 15_000, maxRetries: 0 },
       )
       raw = fallbackResponse.choices[0]?.message?.content
       finishReason = fallbackResponse.choices[0]?.finish_reason
     } catch (fallbackError) {
-      console.error('[scoring] fallback model (gpt-4o-mini) API call also failed:', fallbackError)
+      console.error(`[scoring] fallback model (${FALLBACK_SCORING_MODEL}) also failed (${describeError(fallbackError)})`)
       throw new AnalysisError('SCORING_FAILED', 'Scoring model API call failed (primary and fallback)')
     }
   }
