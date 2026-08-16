@@ -11,6 +11,7 @@ import {
   Sprout,
   MessageSquare,
   Scissors,
+  Cpu,
   type LucideIcon,
 } from 'lucide-react'
 import { ProjectCard } from '@/components/atoms'
@@ -26,6 +27,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
   Sprout,
   MessageSquare,
   Scissors,
+  Cpu,
 }
 
 export interface OtherProjectItem {

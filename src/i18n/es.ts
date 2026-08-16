@@ -103,6 +103,7 @@ export const es: Translations = {
       vamoGps: { title: 'Palante GPS', description: 'Dispositivo GPS' },
       pixelatam: { title: 'Pixelatam', description: 'Juego de Cartas Web 2.5' },
       plantum: { title: 'Plantum', description: 'Futuro Verde' },
+      muunCode: { title: 'MuunCode', description: 'IDE Web' },
       codepass: { title: 'CodePass', description: 'Extensión del navegador' },
       modusRatio: { title: 'Modus Ratio', description: 'Asesor de outfits con IA' },
       quantum: { title: 'Quantum Profit', description: 'Calculadora cripto' },

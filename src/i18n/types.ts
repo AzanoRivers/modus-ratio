@@ -119,6 +119,7 @@ export interface Translations {
       vamoGps: { title: string; description: string }
       pixelatam: { title: string; description: string }
       plantum: { title: string; description: string }
+      muunCode: { title: string; description: string }
       codepass: { title: string; description: string }
       modusRatio: { title: string; description: string }
       quantum: { title: string; description: string }
