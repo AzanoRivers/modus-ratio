@@ -106,7 +106,7 @@ export const es: Translations = {
       muunCode: { title: 'MuunCode', description: 'IDE Web' },
       codepass: { title: 'CodePass', description: 'Extensión del navegador' },
       modusRatio: { title: 'Modus Ratio', description: 'Asesor de outfits con IA' },
-      quantum: { title: 'Quantum Profit', description: 'Calculadora cripto' },
+      quantum: { title: 'Quantum Profit', description: 'Calculadora de movimientos' },
     },
   },
   loader: {
