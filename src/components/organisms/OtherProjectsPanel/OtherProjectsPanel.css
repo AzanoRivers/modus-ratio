@@ -72,6 +72,30 @@
   box-shadow: 0 0 18px rgba(var(--ch-pink), 0.18);
 }
 
+/* Central de Pagos button: near-top by default (mobile), since Otros
+   proyectos/Laboratorio vacate to the bottom on mobile via
+   .opp__btn--bottom, freeing up the top-right corner. Desktop (>=600px,
+   matches --breakpoint-xl) stacks it below .opp__btn--blue's 3rem. */
+.opp__btn--yellow {
+  top: 1rem;
+  border-color: rgba(var(--ch-yellow), 0.4);
+  color: rgba(var(--ch-yellow), 0.8);
+  box-shadow: 0 0 12px rgba(var(--ch-yellow), 0.08);
+}
+
+.opp__btn--yellow:hover {
+  border-color: var(--neon-yellow);
+  color: var(--neon-yellow);
+  background: rgba(var(--ch-yellow), 0.05);
+  box-shadow: 0 0 18px rgba(var(--ch-yellow), 0.18);
+}
+
+@media (min-width: 37.5rem) {
+  .opp__btn--yellow {
+    top: 5rem;
+  }
+}
+
 .opp__btn-icon {
   width: 0.75rem;
   height: 0.75rem;

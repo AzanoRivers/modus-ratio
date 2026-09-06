@@ -108,6 +108,7 @@ export interface Translations {
   nav: {
     laboratory: string
     otherProjects: string
+    paymentCenter: string
     cta: string
     comingSoon: string
     createdBy: string

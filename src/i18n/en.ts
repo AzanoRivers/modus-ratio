@@ -91,6 +91,7 @@ export const en: Translations = {
   nav: {
     laboratory: 'Laboratory',
     otherProjects: 'Other projects',
+    paymentCenter: 'Payment Center',
     cta: 'ENTER',
     comingSoon: 'COMING SOON',
     createdBy: 'Created by AzanoRivers',

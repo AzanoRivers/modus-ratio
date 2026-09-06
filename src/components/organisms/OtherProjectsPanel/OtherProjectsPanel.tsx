@@ -3,6 +3,7 @@ import {
   X,
   FolderOpen,
   FlaskConical,
+  Heart,
   TrendingUp,
   Shield,
   Layers,
@@ -46,6 +47,7 @@ export interface OtherProjectItem {
 interface OtherProjectsPanelProps {
   label: string
   labLabel: string
+  payLabel: string
   ctaLabel: string
   comingSoonLabel: string
   closeLabel: string
@@ -56,6 +58,7 @@ interface OtherProjectsPanelProps {
 export function OtherProjectsPanel({
   label,
   labLabel,
+  payLabel,
   comingSoonLabel,
   closeLabel,
   projects,
@@ -160,6 +163,23 @@ export function OtherProjectsPanel({
         <FolderOpen className="opp__btn-icon" />
         {label}
       </button>
+
+      {/* Central de Pagos: external link, opens support.azanolabs.com in a new
+          tab. Always visible, this project's design is treated as an
+          AzanoLabs internal page. Never uses .opp__btn--bottom: it stays
+          "top" at every breakpoint, its own top value shifts via CSS media
+          query instead (near the top on mobile, since Otros
+          proyectos/Laboratorio vacate to the bottom there; stacked below
+          Otros proyectos on desktop). */}
+      <a
+        href="https://support.azanolabs.com"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="opp__btn opp__btn--yellow"
+      >
+        <Heart className="opp__btn-icon" />
+        {payLabel}
+      </a>
 
       <div
         onClick={() => {
