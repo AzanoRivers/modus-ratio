@@ -29,24 +29,35 @@
   background: rgba(var(--ch-bg), 0.8);
 }
 
-/* Ancla al pie de pantalla en mobile/tablet: el offset lo calcula el
-   componente en runtime (altura del footer visible + separación entre
-   botones) y se pasa como custom property, nunca como propiedad CSS directa.
-   Selector compuesto (.opp__btn.opp__btn--bottom) a propósito: necesita más
-   especificidad que .opp__btn--blue/--pink para pisar su `top` fijo. */
-.opp__btn.opp__btn--bottom {
-  top: auto;
-  bottom: var(--opp-offset, 0px);
-}
-
 @media (min-width: 360px) {
   .opp__btn {
     font-size: 0.625rem;
   }
 }
 
+/* Otros proyectos (blue) + Laboratorio (pink): bottom-anchored by default
+   (mobile/tablet, <37.5rem/600px, matching --breakpoint-xl) so they don't
+   collide with Central de Pagos/Contacto up top there, swapping to
+   top-anchored at >=37.5rem. This used to be a JS-computed `useMobileBottom`
+   boolean (`mounted && !isXl`, `mounted` itself starting `false` on every
+   render) toggling a `.opp__btn--bottom` class: since `mounted` starts
+   `false` regardless of actual viewport width, BOTH buttons always rendered
+   in their DESKTOP top position first, then jumped to the bottom once the
+   mount effect ran, a visible flash-then-correct bug reported by the user,
+   made worse on pages with more hydration work competing for the main
+   thread. Pure CSS media queries have no such gap: the browser applies them
+   at first paint, before any JS runs at all. The only genuinely
+   runtime-only value left is `--opp-offset` (how far the footer currently
+   pokes into view), whose default of `0px` is already the objectively
+   correct state before any scroll happens, so applying it unconditionally
+   causes no flash either. */
+.opp__btn--blue,
+.opp__btn--pink {
+  top: auto;
+}
+
 .opp__btn--blue {
-  top: 3rem;
+  bottom: calc(1rem + var(--opp-offset, 0px));
   border-color: rgba(var(--ch-blue), 0.4);
   color: rgba(var(--ch-blue), 0.8);
   box-shadow: 0 0 12px rgba(var(--ch-blue), 0.08);
@@ -60,6 +71,7 @@
 }
 
 .opp__btn--pink {
+  bottom: calc(3rem + var(--opp-offset, 0px));
   border-color: rgba(var(--ch-pink), 0.4);
   color: rgba(var(--ch-pink), 0.8);
   box-shadow: 0 0 12px rgba(var(--ch-pink), 0.08);
@@ -70,6 +82,30 @@
   color: var(--neon-pink);
   background: rgba(var(--ch-pink), 0.05);
   box-shadow: 0 0 18px rgba(var(--ch-pink), 0.18);
+}
+
+/* Tablet: base offset steps up (matches the old `isLg` >=440px tier). */
+@media (min-width: 27.5rem) {
+  .opp__btn--blue {
+    bottom: calc(1.75rem + var(--opp-offset, 0px));
+  }
+
+  .opp__btn--pink {
+    bottom: calc(3.75rem + var(--opp-offset, 0px));
+  }
+}
+
+/* Desktop: swap back to top-anchored, offset no longer relevant. */
+@media (min-width: 37.5rem) {
+  .opp__btn--blue,
+  .opp__btn--pink {
+    top: 3rem;
+    bottom: auto;
+  }
+
+  .opp__btn--pink {
+    top: 1rem;
+  }
 }
 
 /* Central de Pagos button: near-top by default (mobile), since Otros
@@ -93,6 +129,42 @@
 @media (min-width: 37.5rem) {
   .opp__btn--yellow {
     top: 5rem;
+  }
+}
+
+/* Contacto button: next stacking slot below "Central de Pagos" at every
+   breakpoint (same +2rem increment already used between pink/blue/yellow
+   on desktop). */
+.opp__btn--purple {
+  top: 3rem;
+  border-color: rgba(var(--ch-purple), 0.4);
+  color: rgba(var(--ch-purple), 0.8);
+  box-shadow: 0 0 12px rgba(var(--ch-purple), 0.08);
+}
+
+.opp__btn--purple:hover {
+  border-color: var(--neon-purple);
+  color: var(--neon-purple);
+  background: rgba(var(--ch-purple), 0.05);
+  box-shadow: 0 0 18px rgba(var(--ch-purple), 0.18);
+}
+
+@media (min-width: 37.5rem) {
+  .opp__btn--purple {
+    top: 7rem;
+  }
+}
+
+/* Icon-only on mobile, icon + label on desktop: hides the label via a media
+   query instead of JS state, since this component does not otherwise track
+   a mobile/desktop boolean the way azanolabs-web's sibling component does. */
+.opp__btn-label {
+  display: none;
+}
+
+@media (min-width: 37.5rem) {
+  .opp__btn-label {
+    display: inline;
   }
 }
 

@@ -93,6 +93,7 @@ export const es: Translations = {
     laboratory: 'Laboratorio',
     otherProjects: 'Otros proyectos',
     paymentCenter: 'Central de Pagos',
+    contactButton: 'Contacto',
     cta: 'ACCEDER',
     comingSoon: 'PRÓXIMAMENTE',
     createdBy: 'Creado por AzanoRivers',

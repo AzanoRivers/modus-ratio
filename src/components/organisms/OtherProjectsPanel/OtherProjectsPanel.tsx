@@ -4,6 +4,7 @@ import {
   FolderOpen,
   FlaskConical,
   Heart,
+  Mail,
   TrendingUp,
   Shield,
   Layers,
@@ -48,6 +49,7 @@ interface OtherProjectsPanelProps {
   label: string
   labLabel: string
   payLabel: string
+  contactLabel: string
   ctaLabel: string
   comingSoonLabel: string
   closeLabel: string
@@ -59,6 +61,7 @@ export function OtherProjectsPanel({
   label,
   labLabel,
   payLabel,
+  contactLabel,
   comingSoonLabel,
   closeLabel,
   projects,
@@ -67,21 +70,7 @@ export function OtherProjectsPanel({
   const [open, setOpen] = useState(false)
   const [labOpen, setLabOpen] = useState(false)
   const [footerVisible, setFooterVisible] = useState(false)
-  const [isLg, setIsLg] = useState(false)
-  const [isXl, setIsXl] = useState(false)
-  const [mounted, setMounted] = useState(false)
   const panelRef = useRef<HTMLDivElement | null>(null)
-
-  useEffect(() => {
-    const check = () => {
-      setIsLg(window.innerWidth >= 440)
-      setIsXl(window.innerWidth >= 600) // debe coincidir con --breakpoint-xl de globals.css
-    }
-    check()
-    setMounted(true)
-    window.addEventListener('resize', check)
-    return () => window.removeEventListener('resize', check)
-  }, [])
 
   useEffect(() => {
     const footer = document.getElementById('site-footer')
@@ -113,11 +102,11 @@ export function OtherProjectsPanel({
     return () => window.removeEventListener('keydown', onKey)
   }, [])
 
-  const footerOffset = footerVisible ? 56 : 0
   const isInternal = true
-  const useMobileBottom = mounted && !isXl
-  const baseOtros = isLg ? 28 : 16
-  const baseLab = isLg ? 60 : 48
+  // The only genuinely runtime-only value: whether the footer is currently
+  // scrolled into view. Its default (not visible, correct before any scroll)
+  // is safe to apply unconditionally, see the CSS file's own comment.
+  const offsetStyle = { '--opp-offset': `${footerVisible ? 56 : 0}px` } as React.CSSProperties
 
   const renderCard = (p: OtherProjectItem) => {
     const Icon = ICON_MAP[p.iconKey] ?? Layers
@@ -142,10 +131,8 @@ export function OtherProjectsPanel({
         <button
           type="button"
           onClick={() => setLabOpen(true)}
-          className={`opp__btn opp__btn--pink ${useMobileBottom ? 'opp__btn--bottom' : ''}`}
-          style={useMobileBottom
-            ? { '--opp-offset': `${baseLab + footerOffset}px` } as React.CSSProperties
-            : undefined}
+          className="opp__btn opp__btn--pink"
+          style={offsetStyle}
         >
           <FlaskConical className="opp__btn-icon" />
           {labLabel}
@@ -155,10 +142,8 @@ export function OtherProjectsPanel({
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className={`opp__btn opp__btn--blue ${useMobileBottom ? 'opp__btn--bottom' : ''}`}
-        style={useMobileBottom
-          ? { '--opp-offset': `${baseOtros + footerOffset}px` } as React.CSSProperties
-          : undefined}
+        className="opp__btn opp__btn--blue"
+        style={offsetStyle}
       >
         <FolderOpen className="opp__btn-icon" />
         {label}
@@ -166,8 +151,10 @@ export function OtherProjectsPanel({
 
       {/* Central de Pagos: external link, opens support.azanolabs.com in a new
           tab. Always visible, this project's design is treated as an
-          AzanoLabs internal page. Never uses .opp__btn--bottom: it stays
-          "top" at every breakpoint, its own top value shifts via CSS media
+          AzanoLabs internal page. Stays "top" at every breakpoint (unlike
+          Otros proyectos/Laboratorio, which default to bottom-anchored via
+          CSS on mobile/tablet, see `.opp__btn--blue`/`.opp__btn--pink` in
+          the stylesheet), its own top value shifts via CSS media
           query instead (near the top on mobile, since Otros
           proyectos/Laboratorio vacate to the bottom there; stacked below
           Otros proyectos on desktop). */}
@@ -179,6 +166,23 @@ export function OtherProjectsPanel({
       >
         <Heart className="opp__btn-icon" />
         {payLabel}
+      </a>
+
+      {/* Contacto: this project has no /contact page of its own, so this
+          links out to azanolabs.com/contact (same external-link precedent
+          as "Central de Pagos" above), stacked one slot below it at every
+          breakpoint (same +2rem/32px increment the other buttons use).
+          Icon-only on mobile (label hidden via the `.opp__btn-label` media
+          query), icon + label on desktop, matching the same behavior as the
+          AzanoLabs internal pages this project's design is treated as. */}
+      <a
+        href="https://azanolabs.com/contact"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="opp__btn opp__btn--purple"
+      >
+        <Mail className="opp__btn-icon" />
+        <span className="opp__btn-label">{contactLabel}</span>
       </a>
 
       <div

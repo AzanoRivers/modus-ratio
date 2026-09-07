@@ -92,6 +92,7 @@ export const en: Translations = {
     laboratory: 'Laboratory',
     otherProjects: 'Other projects',
     paymentCenter: 'Payment Center',
+    contactButton: 'Contact',
     cta: 'ENTER',
     comingSoon: 'COMING SOON',
     createdBy: 'Created by AzanoRivers',

@@ -109,6 +109,7 @@ export interface Translations {
     laboratory: string
     otherProjects: string
     paymentCenter: string
+    contactButton: string
     cta: string
     comingSoon: string
     createdBy: string
