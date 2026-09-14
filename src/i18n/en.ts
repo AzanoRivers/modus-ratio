@@ -91,7 +91,7 @@ export const en: Translations = {
   nav: {
     laboratory: 'Laboratory',
     otherProjects: 'Other projects',
-    paymentCenter: 'Payment Center',
+    paymentCenter: 'Support Center',
     contactButton: 'Contact',
     cta: 'ENTER',
     comingSoon: 'COMING SOON',

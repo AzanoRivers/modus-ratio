@@ -92,7 +92,7 @@ export const es: Translations = {
   nav: {
     laboratory: 'Laboratorio',
     otherProjects: 'Otros proyectos',
-    paymentCenter: 'Central de Pagos',
+    paymentCenter: 'Central de Apoyo',
     contactButton: 'Contacto',
     cta: 'ACCEDER',
     comingSoon: 'PRÓXIMAMENTE',
