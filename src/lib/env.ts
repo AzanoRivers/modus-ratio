@@ -54,7 +54,7 @@ export const env = {
     // Análisis de contexto (analyzeOutfitScore.ts): puntúa el outfit ya
     // descrito. Primario vía OpenRouter (scoringClient.ts), fallback vía
     // OpenAI direct (openai.ts, credenciales MODEL_IMAGE_*).
-    contextAnalysis:         optional('CONTEXT_ANALYSIS_MODEL', 'z-ai/glm-5.2'),
+    contextAnalysis:         optional('CONTEXT_ANALYSIS_MODEL', 'z-ai/glm-5.3-flash'),
     contextAnalysisFallback: optional('CONTEXT_ANALYSIS_FALLBACK_MODEL', 'gpt-4o-mini'),
   },
   resend: {
