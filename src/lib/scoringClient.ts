@@ -1,15 +1,13 @@
 import OpenAI from 'openai'
 import { env } from '@/lib/env'
 
-// Base URL confirmada contra la API real de OpenCode Go (GET /v1/models).
-// No cambiar sin volver a verificar ahí primero.
 export const scoringClient = new OpenAI({
-  apiKey:  env.opencode.apiKey,
-  baseURL: 'https://opencode.ai/zen/go/v1',
+  apiKey:  env.modelContext.apiKey,
+  baseURL: env.modelContext.baseUrl,
 })
 
 // Modelo de scoring (dimensiones, puntaje global y recomendaciones del
-// outfit), configurable vía CONTEXT_ANALYSIS_MODEL (default glm-5.2, ver
+// outfit), configurable vía CONTEXT_ANALYSIS_MODEL (default z-ai/glm-5.2, ver
 // env.ts). Antes era minimax-m3, de ahí que este archivo se haya llamado
 // "minimax.ts"; se renombró a algo neutral al modelo para no volver a
 // quedar desactualizado en el próximo cambio.

@@ -37,11 +37,13 @@ export const env = {
     bucketName:      required('R2_BUCKET_NAME'),
     publicUrl:       required('R2_PUBLIC_URL'),
   },
-  openai: {
-    apiKey: required('OPENAI_API_KEY'),
+  modelImage: {
+    apiKey:  required('MODEL_IMAGE_API_KEY'),
+    baseUrl: optional('MODEL_IMAGE_BASE_URL', 'https://api.openai.com/v1'),
   },
-  opencode: {
-    apiKey: required('OPENCODE_API_KEY'),
+  modelContext: {
+    apiKey:  required('MODEL_CONTEXT_API_KEY'),
+    baseUrl: optional('MODEL_CONTEXT_BASE_URL', 'https://openrouter.ai/api/v1'),
   },
   models: {
     // Análisis de imagen (extractOutfitDescription.ts): describe el outfit
@@ -50,9 +52,9 @@ export const env = {
     imageAnalysis:           optional('IMAGE_ANALYSIS_MODEL', 'gpt-4o-mini'),
     imageAnalysisFallback:   optional('IMAGE_ANALYSIS_FALLBACK_MODEL', 'gpt-4o'),
     // Análisis de contexto (analyzeOutfitScore.ts): puntúa el outfit ya
-    // descrito. Primario vía OpenCode Go (scoringClient.ts), fallback vía
-    // OpenAI.
-    contextAnalysis:         optional('CONTEXT_ANALYSIS_MODEL', 'glm-5.2'),
+    // descrito. Primario vía OpenRouter (scoringClient.ts), fallback vía
+    // OpenAI direct (openai.ts, credenciales MODEL_IMAGE_*).
+    contextAnalysis:         optional('CONTEXT_ANALYSIS_MODEL', 'z-ai/glm-5.2'),
     contextAnalysisFallback: optional('CONTEXT_ANALYSIS_FALLBACK_MODEL', 'gpt-4o-mini'),
   },
   resend: {
